@@ -1,5 +1,15 @@
 /** @format */
 
-export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+function getEnv(key: string) {
+  const value = process.env[key];
 
-export const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!value) {
+    throw new Error(`Missing environment variable: ${key}`);
+  }
+
+  return value;
+}
+
+export const SUPABASE_URL = getEnv("NEXT_PUBLIC_SUPABASE_URL");
+
+export const SUPABASE_ANON_KEY = getEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
