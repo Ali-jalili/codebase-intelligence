@@ -88,4 +88,14 @@ async function handleLogout() {
   };
 }
 
-export { handleSignUp, handleLogin, handleLogout };
+async function getCurrentUser() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user;
+}
+
+export { handleSignUp, handleLogin, handleLogout, getCurrentUser };

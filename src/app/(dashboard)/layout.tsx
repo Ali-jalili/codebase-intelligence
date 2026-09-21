@@ -1,9 +1,19 @@
 /** @format */
 
-export default function DashboardLayout({
+import { getCurrentUser } from "@/actions/auth";
+import DashboardNavbar from "@/components/DashboardNavbar";
+
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <div>{children}</div>;
+  const user = await getCurrentUser();
+
+  return (
+    <>
+      <DashboardNavbar user={user} />
+      {children}
+    </>
+  );
 }
