@@ -1,5 +1,5 @@
 /** @format */
-"use client";
+
 import { handleSignUp } from "@/actions/auth";
 import AuthCard from "@/components/AuthCard";
 
@@ -17,6 +17,7 @@ export default function SignupPage() {
             <input
               type="text"
               name="name"
+              required
               placeholder="Your name"
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
@@ -28,6 +29,7 @@ export default function SignupPage() {
             <input
               type="email"
               name="email"
+              required
               placeholder="you@example.com"
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
@@ -39,6 +41,8 @@ export default function SignupPage() {
             <input
               type="password"
               name="password"
+              required
+              minLength={6}
               placeholder="••••••••"
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
@@ -50,6 +54,7 @@ export default function SignupPage() {
             <input
               type="password"
               name="confirmPassword"
+              required
               placeholder="••••••••"
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />

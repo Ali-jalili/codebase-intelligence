@@ -15,6 +15,11 @@ async function handleSignUp(formData: FormData): Promise<void> {
     return;
   }
 
+  if (password.length < 6) {
+    console.error("Password must be at least 6 characters");
+    return;
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({
