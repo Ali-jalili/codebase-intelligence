@@ -1,11 +1,12 @@
 /** @format */
 
 import { getCurrentUser } from "@/actions/auth";
-import { createClient } from "@/lib/supabase/server";
+import { createProject as createProjectInDb } from "./services";
 
-export async function createProject(formData: FormData) {
+export async function createProjectAction(formData: FormData) {
   const name = formData.get("name")?.toString() ?? "";
   const description = formData.get("description")?.toString() ?? "";
+
   const projectName = name.trim();
 
   if (!projectName) {
@@ -14,6 +15,7 @@ export async function createProject(formData: FormData) {
       error: "Project name is required",
     };
   }
+
   const user = await getCurrentUser();
 
   if (!user) {
@@ -23,22 +25,20 @@ export async function createProject(formData: FormData) {
     };
   }
 
-  const supabase = await createClient();
+  try {
+    await createProjectInDb({
+      userId: user.id,
+      name: projectName,
+      description: description.trim() || null,
+    });
 
-  const { error } = await supabase.from("projects").insert({
-    user_id: user.id,
-    name: projectName,
-    description: description.trim() || null,
-  });
-
-  if (error) {
+    return {
+      success: true,
+    };
+  } catch {
     return {
       success: false,
       error: "Failed to create project",
     };
   }
-
-  return {
-    success: true,
-  };
 }
