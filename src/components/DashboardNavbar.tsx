@@ -34,10 +34,7 @@ export default function DashboardNavbar({ user }: DashboardNavbarProps) {
             Dashboard
           </Link>
 
-          <Link
-            href="/dashboard/projects"
-            className="transition hover:text-foreground"
-          >
+          <Link href="/projects" className="transition hover:text-foreground">
             Projects
           </Link>
 
