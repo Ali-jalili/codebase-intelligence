@@ -1,5 +1,6 @@
 /** @format */
-
+"use client";
+import { handleSignUp } from "@/actions/auth";
 import AuthCard from "@/components/AuthCard";
 
 export default function SignupPage() {
@@ -9,12 +10,13 @@ export default function SignupPage() {
         title="Create your account"
         description="Start understanding and analyzing your codebases."
       >
-        <form className="space-y-5">
+        <form action={handleSignUp} className="space-y-5">
           <div className="space-y-2">
             <label className="text-sm text-foreground">Name</label>
 
             <input
               type="text"
+              name="name"
               placeholder="Your name"
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
@@ -25,6 +27,7 @@ export default function SignupPage() {
 
             <input
               type="email"
+              name="email"
               placeholder="you@example.com"
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
@@ -35,6 +38,7 @@ export default function SignupPage() {
 
             <input
               type="password"
+              name="password"
               placeholder="••••••••"
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
@@ -45,6 +49,7 @@ export default function SignupPage() {
 
             <input
               type="password"
+              name="confirmPassword"
               placeholder="••••••••"
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
