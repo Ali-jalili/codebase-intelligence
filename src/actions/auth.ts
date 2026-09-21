@@ -98,40 +98,4 @@ async function getCurrentUser() {
   return user;
 }
 
-async function createProject(formData: FormData) {
-  const name = formData.get("name")?.toString() ?? "";
-  const description = formData.get("description")?.toString() ?? "";
-
-  if (!name.trim()) {
-    return {
-      success: false,
-      error: "Project name is required",
-    };
-  }
-
-  const supabase = await createClient();
-
-  const { error } = await supabase.from("projects").insert({
-    name,
-    description,
-  });
-
-  if (error) {
-    return {
-      success: false,
-      error: "Failed to create project",
-    };
-  }
-
-  return {
-    success: true,
-  };
-}
-
-export {
-  handleSignUp,
-  handleLogin,
-  handleLogout,
-  getCurrentUser,
-  createProject,
-};
+export { handleSignUp, handleLogin, handleLogout, getCurrentUser };
