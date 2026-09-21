@@ -52,4 +52,40 @@ async function handleSignUp(
   };
 }
 
-export { handleSignUp };
+async function handleLogin(formData: FormData): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const email = formData.get("email")?.toString() ?? "";
+  const password = formData.get("password")?.toString() ?? "";
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+
+  return {
+    success: true,
+  };
+}
+
+async function handleLogout() {
+  const supabase = await createClient();
+
+  await supabase.auth.signOut();
+
+  return {
+    success: true,
+  };
+}
+
+export { handleSignUp, handleLogin, handleLogout };
