@@ -2,9 +2,9 @@
 
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import { handleLogin } from "@/actions/auth";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -13,9 +13,10 @@ export default function LoginForm() {
     const result = await handleLogin(formData);
 
     if (result.success) {
+      toast.success("Signed in successfully");
       router.push("/dashboard");
     } else {
-      alert(result.error);
+      toast.error(result.error);
     }
   }
 
