@@ -1,9 +1,22 @@
 /** @format */
-
+"use server";
 import { getCurrentUser } from "@/actions/auth";
 import { createProject as createProjectInDb } from "./services";
 
-export async function createProjectAction(formData: FormData) {
+interface CreateProjectSuccess {
+  success: true;
+}
+
+interface CreateProjectFailure {
+  success: false;
+  error: string;
+}
+
+type CreateProjectResult = CreateProjectSuccess | CreateProjectFailure;
+
+export async function createProjectAction(
+  formData: FormData,
+): Promise<CreateProjectResult> {
   const name = formData.get("name")?.toString() ?? "";
   const description = formData.get("description")?.toString() ?? "";
 
@@ -35,7 +48,25 @@ export async function createProjectAction(formData: FormData) {
     return {
       success: true,
     };
-  } catch {
+    // } catch {
+    //   return {
+    //     success: false,
+    //     error: "Failed to create project",
+    //   };
+    // }
+  } catch (error) {
+    console.log("CREATE PROJECT ERROR:", error);
+
+    if (
+      error instanceof Error &&
+      error.message.includes("projects_user_id_name_unique")
+    ) {
+      return {
+        success: false,
+        error: "A project with this name already exists.",
+      };
+    }
+
     return {
       success: false,
       error: "Failed to create project",

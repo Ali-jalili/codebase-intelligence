@@ -2,9 +2,26 @@
 
 "use client";
 
+import { useState } from "react";
+import { createProjectAction } from "@/app/projects/actions";
+
 export default function CreateProjectForm() {
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(formData: FormData) {
+    setError(null);
+    const result = await createProjectAction(formData);
+
+    if (!result.success) {
+      setError(result.error);
+    }
+  }
+
   return (
-    <form className="rounded-xl border border-border bg-surface p-6 shadow-sm">
+    <form
+      action={handleSubmit}
+      className="rounded-xl border border-border bg-surface p-6 shadow-sm"
+    >
       <div className="space-y-6">
         <div>
           <label
@@ -40,6 +57,8 @@ export default function CreateProjectForm() {
             className="w-full resize-none rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted focus:border-primary"
           />
         </div>
+
+        {error && <p className="text-sm text-red-600">{error}</p>}
 
         <div className="flex items-center justify-end gap-3 border-t border-border pt-5">
           <button
