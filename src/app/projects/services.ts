@@ -22,7 +22,7 @@ export async function createProject(data: CreateProjectData) {
     .single();
 
   if (error) {
-    throw new Error(error.message);
+    throw error;
   }
 
   return project;

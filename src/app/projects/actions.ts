@@ -1,8 +1,9 @@
 /** @format */
 "use server";
-import { getCurrentUser } from "@/actions/auth";
-import { createProject as createProjectInDb } from "./services";
 
+import { getCurrentUser } from "@/actions/auth";
+
+import { createProject as createProjectInDb } from "./services";
 interface CreateProjectSuccess {
   success: true;
 }
@@ -10,6 +11,7 @@ interface CreateProjectSuccess {
 interface CreateProjectFailure {
   success: false;
   error: string;
+  field?: string;
 }
 
 type CreateProjectResult = CreateProjectSuccess | CreateProjectFailure;
@@ -26,6 +28,7 @@ export async function createProjectAction(
     return {
       success: false,
       error: "Project name is required",
+      field: "name",
     };
   }
 
@@ -48,22 +51,17 @@ export async function createProjectAction(
     return {
       success: true,
     };
-    // } catch {
-    //   return {
-    //     success: false,
-    //     error: "Failed to create project",
-    //   };
-    // }
   } catch (error) {
-    console.log("CREATE PROJECT ERROR:", error);
-
     if (
-      error instanceof Error &&
-      error.message.includes("projects_user_id_name_unique")
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "23505"
     ) {
       return {
         success: false,
-        error: "A project with this name already exists.",
+        error: "This project name is already in use. Choose a different name.",
+        field: "name",
       };
     }
 
