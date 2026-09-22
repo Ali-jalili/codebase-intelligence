@@ -14,15 +14,14 @@ export default async function ProjectsPage() {
     <main className="min-h-[calc(100vh-4rem)] px-6 py-12">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
-
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              Your Projects
+              Your Codebases
             </h1>
 
             <p className="mt-2 text-sm text-muted-foreground">
-              Manage and explore your codebase projects.
+              Explore and understand your connected codebases.
             </p>
           </div>
 
@@ -30,12 +29,11 @@ export default async function ProjectsPage() {
             href="/projects/new"
             className="shrink-0 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
           >
-            Create Project
+            Create Workspace
           </Link>
         </div>
 
         {/* Content */}
-
         {projects.length === 0 ? (
           <EmptyProjects />
         ) : (

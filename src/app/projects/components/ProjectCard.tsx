@@ -7,21 +7,14 @@ interface ProjectCardProps {
     id: string;
     name: string;
     description: string | null;
-    created_at: string;
   };
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const createdDate = new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(project.created_at));
-
   return (
     <article className="group flex flex-col justify-between rounded-2xl border border-border bg-surface p-5 transition-all duration-200 hover:border-primary/40 hover:shadow-sm">
       <div>
-        <div className="mb-5 flex items-start justify-between gap-4">
+        <div className="mb-5 flex items-start justify-between">
           <div className="flex size-10 items-center justify-center rounded-lg bg-accent text-accent-foreground">
             <span className="text-lg font-semibold">
               {project.name.charAt(0).toUpperCase()}
@@ -34,20 +27,35 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </h2>
 
         <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
-          {project.description || "No description provided for this project."}
+          {project.description ||
+            "Explore and understand this codebase architecture."}
         </p>
+
+        <div className="mt-5 space-y-3 rounded-xl border border-border bg-background p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Repository</span>
+
+            <span className="text-xs font-medium text-foreground">
+              Not connected
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Status</span>
+
+            <span className="text-xs font-medium text-foreground">
+              Setup required
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
-        <span className="text-xs text-muted-foreground">
-          Created {createdDate}
-        </span>
-
+      <div className="mt-6 flex items-center justify-end border-t border-border pt-4">
         <Link
           href={`/projects/${project.id}`}
           className="text-sm font-medium text-primary transition-colors hover:text-primary-hover"
         >
-          Open →
+          Open Workspace →
         </Link>
       </div>
     </article>
