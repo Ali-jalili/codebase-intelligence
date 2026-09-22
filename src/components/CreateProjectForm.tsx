@@ -9,6 +9,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { createProjectAction } from "@/app/projects/actions";
+import { useRouter } from "next/navigation";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -29,6 +30,8 @@ function SubmitButton() {
 export default function CreateProjectForm() {
   const [nameError, setNameError] = useState<string | null>(null);
 
+  const router = useRouter();
+
   async function handleSubmit(formData: FormData) {
     setNameError(null);
     const result = await createProjectAction(formData);
@@ -45,6 +48,7 @@ export default function CreateProjectForm() {
 
     setNameError(null);
     toast.success("Project created successfully");
+    router.push("/projects");
   }
 
   function handleNameChange() {

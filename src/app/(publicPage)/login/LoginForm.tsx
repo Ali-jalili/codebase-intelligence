@@ -39,7 +39,7 @@ export default function LoginForm() {
 
     toast.success("Signed in successfully");
 
-    router.push("/dashboard");
+    router.push("/projects");
   }
 
   return (

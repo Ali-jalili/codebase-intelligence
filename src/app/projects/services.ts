@@ -1,5 +1,6 @@
 /** @format */
 
+import { getCurrentUser } from "@/actions/auth";
 import { createClient } from "@/lib/supabase/server";
 
 type CreateProjectData = {
@@ -26,4 +27,28 @@ export async function createProject(data: CreateProjectData) {
   }
 
   return project;
+}
+
+export async function getProjects() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 }

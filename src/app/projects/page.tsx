@@ -1,21 +1,11 @@
 /** @format */
 
 import Link from "next/link";
+import { getProjects } from "./services";
 
-const projects = [
-  {
-    id: "1",
-    name: "Codebase Intelligence",
-    description: "Understand and explore the structure of a codebase.",
-  },
-  {
-    id: "2",
-    name: "FormFlow",
-    description: "Dynamic form builder with a draft and publish workflow.",
-  },
-];
+export default async function ProjectsPage() {
+  const data = await getProjects();
 
-export default function ProjectsPage() {
   return (
     <main className="min-h-[calc(100vh-4rem)] px-6 py-12">
       <div className="mx-auto max-w-6xl">
@@ -41,7 +31,7 @@ export default function ProjectsPage() {
 
         {/* Projects */}
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
+          {data.map((project) => (
             <article
               key={project.id}
               className="group rounded-xl border border-border bg-surface p-5 transition-colors hover:border-primary/50"
