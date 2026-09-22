@@ -1,5 +1,7 @@
 /** @format */
 
+import Link from "next/link";
+
 interface ProjectHeaderProps {
   project: {
     name: string;
@@ -10,7 +12,14 @@ interface ProjectHeaderProps {
 export default function ProjectHeader({ project }: ProjectHeaderProps) {
   return (
     <section>
-      <p className="text-sm text-muted-foreground">Codebase Workspace</p>
+      <Link
+        href="/projects"
+        className="inline-flex text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+      >
+        ← Back to codebases
+      </Link>
+
+      <p className="mt-5 text-sm text-muted-foreground">Codebase Workspace</p>
 
       <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
         {project.name}

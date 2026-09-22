@@ -40,7 +40,7 @@ export default function SignupPage() {
 
     toast.success("Account created successfully");
 
-    router.push("/projects");
+    router.push(result.redirectTo ?? "/projects/new");
   }
 
   return (

@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 type AuthResult =
   | {
       success: true;
+      redirectTo?: string;
     }
   | {
       success: false;
@@ -35,7 +36,7 @@ async function handleSignUp(formData: FormData): Promise<AuthResult> {
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -54,6 +55,7 @@ async function handleSignUp(formData: FormData): Promise<AuthResult> {
 
   return {
     success: true,
+    redirectTo: data.session ? "/projects/new" : "/login",
   };
 }
 
@@ -77,6 +79,7 @@ async function handleLogin(formData: FormData): Promise<AuthResult> {
 
   return {
     success: true,
+    redirectTo: "/projects",
   };
 }
 

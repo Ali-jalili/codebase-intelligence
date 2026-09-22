@@ -75,3 +75,18 @@ export async function getProjectById(projectId: string) {
 
   return data;
 }
+
+export async function projectBelongsToUser(projectId: string, userId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("projects")
+    .select("id")
+    .eq("id", projectId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  return Boolean(data);
+}

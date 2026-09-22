@@ -1,6 +1,7 @@
 /** @format */
 
 import { getProjectById } from "../services";
+import { getWorkspaceState } from "./services";
 import ProjectWorkspace from "./components/ProjectWorkspace";
 
 export default async function ProjectPage({
@@ -11,6 +12,7 @@ export default async function ProjectPage({
   const { projectId } = await params;
 
   const project = await getProjectById(projectId);
+  const workspace = await getWorkspaceState(projectId);
 
-  return <ProjectWorkspace project={project} />;
+  return <ProjectWorkspace project={project} workspace={workspace} />;
 }

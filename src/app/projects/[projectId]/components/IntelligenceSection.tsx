@@ -1,6 +1,12 @@
 /** @format */
 
-export default function IntelligenceSection() {
+import type { WorkspaceStatus } from "../services";
+
+export default function IntelligenceSection({
+  status,
+}: {
+  status: WorkspaceStatus;
+}) {
   return (
     <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
       <h2 className="text-lg font-semibold text-foreground">
@@ -11,24 +17,16 @@ export default function IntelligenceSection() {
         Explore architecture insights generated from your codebase.
       </p>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-border bg-background p-4">
-          <p className="text-sm text-muted-foreground">Components</p>
-
-          <p className="mt-2 text-xl font-semibold text-foreground">—</p>
-        </div>
-
-        <div className="rounded-xl border border-border bg-background p-4">
-          <p className="text-sm text-muted-foreground">Relationships</p>
-
-          <p className="mt-2 text-xl font-semibold text-foreground">—</p>
-        </div>
-
-        <div className="rounded-xl border border-border bg-background p-4">
-          <p className="text-sm text-muted-foreground">Insights</p>
-
-          <p className="mt-2 text-xl font-semibold text-foreground">Locked</p>
-        </div>
+      <div className="mt-6 rounded-xl border border-dashed border-border bg-background p-5">
+        <p className="text-sm font-medium text-foreground">
+          {status === "READY"
+            ? "Your codebase intelligence will appear here."
+            : "Connect and analyze a repository to unlock codebase intelligence."}
+        </p>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          Architecture relationships, dependencies, and useful entry points will
+          be organized around the codebase itself.
+        </p>
       </div>
     </section>
   );

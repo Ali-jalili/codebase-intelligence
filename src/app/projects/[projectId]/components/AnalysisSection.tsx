@@ -1,6 +1,20 @@
 /** @format */
 
-export default function AnalysisSection() {
+import type { WorkspaceStatus } from "../services";
+
+const statusCopy: Record<WorkspaceStatus, string> = {
+  EMPTY: "Waiting for repository",
+  REPOSITORY_CONNECTED: "Ready to start analysis",
+  ANALYZING: "Analyzing your codebase",
+  READY: "Codebase map is ready",
+  FAILED: "Analysis needs attention",
+};
+
+export default function AnalysisSection({
+  status,
+}: {
+  status: WorkspaceStatus;
+}) {
   return (
     <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
       <h2 className="text-lg font-semibold text-foreground">Analysis</h2>
@@ -14,7 +28,7 @@ export default function AnalysisSection() {
           <span className="text-sm text-muted-foreground">Status</span>
 
           <span className="text-sm font-medium text-foreground">
-            Waiting for repository
+            {statusCopy[status]}
           </span>
         </div>
       </div>
