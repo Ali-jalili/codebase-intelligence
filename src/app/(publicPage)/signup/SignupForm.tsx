@@ -1,11 +1,31 @@
 /** @format */
+
 "use client";
+
 import { useRouter } from "next/navigation";
+import { useFormStatus } from "react-dom";
+
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { handleSignUp } from "@/actions/auth";
-
 import AuthCard from "@/components/AuthCard";
-import { toast } from "sonner";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {pending && <Loader2 className="size-4 animate-spin" />}
+
+      {pending ? "Creating account..." : "Create Account"}
+    </button>
+  );
+}
 
 export default function SignupPage() {
   const router = useRouter();
@@ -13,12 +33,14 @@ export default function SignupPage() {
   async function handleSignupSubmit(formData: FormData) {
     const result = await handleSignUp(formData);
 
-    if (result.success) {
-      router.push("/dashboard");
-      toast.success("Account created successfully");
-    } else {
+    if (!result.success) {
       toast.error(result.error);
+      return;
     }
+
+    toast.success("Account created successfully");
+
+    router.push("/dashboard");
   }
 
   return (
@@ -77,12 +99,7 @@ export default function SignupPage() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-primary py-3 text-sm font-medium text-white transition hover:bg-primary-hover"
-          >
-            Create Account
-          </button>
+          <SubmitButton />
         </form>
       </AuthCard>
     </main>

@@ -2,9 +2,29 @@
 
 "use client";
 
-import { handleLogin } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import { useFormStatus } from "react-dom";
+
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+
+import { handleLogin } from "@/actions/auth";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {pending && <Loader2 className="size-4 animate-spin" />}
+
+      {pending ? "Signing in..." : "Sign in"}
+    </button>
+  );
+}
 
 export default function LoginForm() {
   const router = useRouter();
@@ -12,12 +32,14 @@ export default function LoginForm() {
   async function handleSubmit(formData: FormData) {
     const result = await handleLogin(formData);
 
-    if (result.success) {
-      toast.success("Signed in successfully");
-      router.push("/dashboard");
-    } else {
+    if (!result.success) {
       toast.error(result.error);
+      return;
     }
+
+    toast.success("Signed in successfully");
+
+    router.push("/dashboard");
   }
 
   return (
@@ -46,12 +68,7 @@ export default function LoginForm() {
         />
       </div>
 
-      <button
-        type="submit"
-        className="w-full rounded-lg bg-primary py-3 text-sm font-medium text-white transition hover:bg-primary-hover"
-      >
-        Sign in
-      </button>
+      <SubmitButton />
     </form>
   );
 }

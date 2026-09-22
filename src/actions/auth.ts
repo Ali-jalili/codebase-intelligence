@@ -4,11 +4,18 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-async function handleSignUp(
-  formData: FormData,
-): Promise<{ success: boolean; error?: string }> {
-  const name = formData.get("name")?.toString() ?? "";
-  const email = formData.get("email")?.toString() ?? "";
+type AuthResult =
+  | {
+      success: true;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
+async function handleSignUp(formData: FormData): Promise<AuthResult> {
+  const name = formData.get("name")?.toString().trim() ?? "";
+  const email = formData.get("email")?.toString().trim() ?? "";
   const password = formData.get("password")?.toString() ?? "";
   const confirmPassword = formData.get("confirmPassword")?.toString() ?? "";
 
@@ -20,7 +27,6 @@ async function handleSignUp(
   }
 
   if (password.length < 6) {
-    console.error("Password must be at least 6 characters");
     return {
       success: false,
       error: "Password must be at least 6 characters",
@@ -40,10 +46,9 @@ async function handleSignUp(
   });
 
   if (error) {
-    console.error("Error signing up:", error);
     return {
       success: false,
-      error: "Error signing up: " + error.message,
+      error: error.message,
     };
   }
 
@@ -52,11 +57,8 @@ async function handleSignUp(
   };
 }
 
-async function handleLogin(formData: FormData): Promise<{
-  success: boolean;
-  error?: string;
-}> {
-  const email = formData.get("email")?.toString() ?? "";
+async function handleLogin(formData: FormData): Promise<AuthResult> {
+  const email = formData.get("email")?.toString().trim() ?? "";
   const password = formData.get("password")?.toString() ?? "";
 
   const supabase = await createClient();
