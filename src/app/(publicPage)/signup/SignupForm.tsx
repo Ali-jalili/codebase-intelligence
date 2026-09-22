@@ -5,18 +5,19 @@ import { useRouter } from "next/navigation";
 import { handleSignUp } from "@/actions/auth";
 
 import AuthCard from "@/components/AuthCard";
+import { toast } from "sonner";
 
 export default function SignupPage() {
   const router = useRouter();
 
   async function handleSignupSubmit(formData: FormData) {
     const result = await handleSignUp(formData);
-    console.log(result);
 
     if (result.success) {
       router.push("/dashboard");
+      toast.success("Account created successfully");
     } else {
-      alert(result.error);
+      toast.error(result.error);
     }
   }
 
