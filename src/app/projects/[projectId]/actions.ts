@@ -72,4 +72,6 @@ export async function createRepositoryAction(
   }
 }
 
-export async function createAnalysisAction(repositoryId: string) {}
+export async function createAnalysisAction(repositoryId: string) {
+  void repositoryId;
+}
