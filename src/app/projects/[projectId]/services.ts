@@ -13,6 +13,14 @@ export type Repository = {
   updated_at: string;
 };
 
+export type Analysis = {
+  id: string;
+  repository_id: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export type WorkspaceStatus =
   | "EMPTY"
   | "REPOSITORY_CONNECTED"
@@ -102,5 +110,22 @@ export async function createAnalysis(repositoryId: string) {
 
   if (error) throw error;
 
-  return analysis;
+  return analysis as Analysis;
+}
+
+export async function getAnalysisForRepositories(
+  repositoryIds: string[],
+): Promise<Analysis[]> {
+  if (repositoryIds.length === 0) return [];
+
+  const supabase = await createClient();
+
+  const { data: analyses, error } = await supabase
+    .from("analyses")
+    .select("*")
+    .in("repository_id", repositoryIds);
+
+  if (error) throw error;
+
+  return (analyses ?? []) as Analysis[];
 }
