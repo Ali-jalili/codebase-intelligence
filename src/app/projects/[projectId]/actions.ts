@@ -5,7 +5,7 @@
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/actions/auth";
 import { projectBelongsToUser } from "../services";
-import { createRepository, type Repository } from "./services";
+import { createAnalysis, createRepository, type Repository } from "./services";
 
 type RepositoryResult =
   | { success: true; data: Repository }
@@ -73,5 +73,5 @@ export async function createRepositoryAction(
 }
 
 export async function createAnalysisAction(repositoryId: string) {
-  void repositoryId;
+  createAnalysis(repositoryId);
 }

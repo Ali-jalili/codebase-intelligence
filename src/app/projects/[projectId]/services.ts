@@ -87,3 +87,20 @@ export async function getWorkspaceState(
     repositories,
   };
 }
+
+export async function createAnalysis(repositoryId: string) {
+  const supabase = await createClient();
+
+  const { data: analysis, error } = await supabase
+    .from("analyses")
+    .insert({
+      repository_id: repositoryId,
+      status: "pending",
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return analysis;
+}
