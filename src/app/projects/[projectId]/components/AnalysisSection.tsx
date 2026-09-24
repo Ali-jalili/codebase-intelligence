@@ -3,6 +3,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   CheckCircle2,
@@ -11,37 +12,56 @@ import {
   Play,
 } from "lucide-react";
 import { createAnalysisAction } from "../actions";
-import type { Repository, WorkspaceStatus } from "../services";
+import type { Analysis, Repository, WorkspaceStatus } from "../services";
 
-const statusCopy: Record<WorkspaceStatus, string> = {
-  EMPTY: "Waiting for repository",
-  REPOSITORY_CONNECTED: "Ready to start analysis",
-  ANALYZING: "Analyzing your codebase",
-  READY: "Codebase map is ready",
-  FAILED: "Analysis needs attention",
+type AnalysisStatus = Analysis["status"];
+
+const statusCopy: Record<AnalysisStatus | "waiting", string> = {
+  waiting: "Ready to start analysis",
+  pending: "Queued for analysis",
+  processing: "Analyzing your codebase",
+  completed: "Codebase map is ready",
+  failed: "Analysis needs attention",
 };
 
 export default function AnalysisSection({
   status,
   repositories,
+  analyses,
 }: {
   status: WorkspaceStatus;
   repositories: Repository[];
+  analyses: Analysis[];
 }) {
+  const router = useRouter();
   const [analyzingRepositoryId, setAnalyzingRepositoryId] = useState<
     string | null
   >(null);
 
-  const isEmpty = repositories.length === 0;
-  const isAnalyzing = status === "ANALYZING";
-  const isReady = status === "READY";
-  const isFailed = status === "FAILED";
+  const isEmpty = status === "EMPTY" || repositories.length === 0;
+  const analysisStatuses = analyses.map((analysis) => analysis.status);
+  const hasProcessingAnalysis = analysisStatuses.includes("processing");
+  const hasFailedAnalysis = analysisStatuses.includes("failed");
+  const hasCompletedAnalysis = analysisStatuses.includes("completed");
+  const headerStatus: AnalysisStatus | "waiting" = isEmpty
+    ? "waiting"
+    : hasProcessingAnalysis
+      ? "processing"
+      : hasFailedAnalysis
+        ? "failed"
+        : hasCompletedAnalysis
+          ? "completed"
+          : "waiting";
+  const isAnalyzing = headerStatus === "processing";
+  const isReady = headerStatus === "completed";
+  const isFailed = headerStatus === "failed";
 
   async function handleAnalyze(repositoryId: string) {
     setAnalyzingRepositoryId(repositoryId);
 
     try {
       await createAnalysisAction(repositoryId);
+      router.refresh();
     } finally {
       setAnalyzingRepositoryId(null);
     }
@@ -80,7 +100,7 @@ export default function AnalysisSection({
           {!isAnalyzing && !isReady && !isFailed && (
             <GitBranch className="size-3.5" />
           )}
-          {statusCopy[status]}
+          {statusCopy[headerStatus]}
         </span>
       </div>
 
@@ -117,8 +137,13 @@ export default function AnalysisSection({
         ) : (
           <div className="divide-y divide-border">
             {repositories.map((repository) => {
+              const analysis = analyses.find(
+                (item) => item.repository_id === repository.id,
+              );
+              const analysisStatus = analysis?.status ?? "waiting";
               const isRepositoryAnalyzing =
-                analyzingRepositoryId === repository.id;
+                analyzingRepositoryId === repository.id ||
+                analysisStatus === "processing";
 
               return (
                 <div
@@ -139,12 +164,19 @@ export default function AnalysisSection({
                       <p className="mt-1 truncate text-xs text-muted-foreground">
                         {repository.url}
                       </p>
+                      <p className="mt-2 text-xs font-medium text-muted-foreground">
+                        {statusCopy[analysisStatus]}
+                      </p>
                     </div>
                   </div>
 
                   <button
                     type="button"
-                    disabled={isAnalyzing || isRepositoryAnalyzing}
+                    disabled={
+                      isAnalyzing ||
+                      isRepositoryAnalyzing ||
+                      analysisStatus === "pending"
+                    }
                     onClick={() => handleAnalyze(repository.id)}
                     className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
                   >
@@ -153,7 +185,13 @@ export default function AnalysisSection({
                     ) : (
                       <Play className="size-4 fill-current" />
                     )}
-                    {isRepositoryAnalyzing ? "Analyzing..." : "Analyze"}
+                    {analysisStatus === "pending"
+                      ? "Queued"
+                      : isRepositoryAnalyzing
+                        ? "Analyzing..."
+                        : analysisStatus === "completed"
+                          ? "Analyze again"
+                          : "Analyze"}
                   </button>
                 </div>
               );

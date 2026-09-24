@@ -31,6 +31,7 @@ export type WorkspaceStatus =
 export type WorkspaceState = {
   status: WorkspaceStatus;
   repositories: Repository[];
+  analyses: Analysis[];
 };
 
 type CreateRepositoryData = {
@@ -85,17 +86,6 @@ export function getWorkspaceStatus(
   return repositories.length === 0 ? "EMPTY" : "REPOSITORY_CONNECTED";
 }
 
-export async function getWorkspaceState(
-  projectId: string,
-): Promise<WorkspaceState> {
-  const repositories = await getRepositoriesForProject(projectId);
-
-  return {
-    status: getWorkspaceStatus(repositories),
-    repositories,
-  };
-}
-
 export async function createAnalysis(repositoryId: string) {
   const supabase = await createClient();
 
@@ -128,4 +118,18 @@ export async function getAnalysisForRepositories(
   if (error) throw error;
 
   return (analyses ?? []) as Analysis[];
+}
+
+export async function getWorkspaceState(
+  projectId: string,
+): Promise<WorkspaceState> {
+  const repositories = await getRepositoriesForProject(projectId);
+  const repositoryIds = repositories.map((repository) => repository.id);
+  const analyses = await getAnalysisForRepositories(repositoryIds);
+
+  return {
+    status: getWorkspaceStatus(repositories),
+    repositories,
+    analyses,
+  };
 }
