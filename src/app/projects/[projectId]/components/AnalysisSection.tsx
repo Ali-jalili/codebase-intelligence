@@ -4,25 +4,31 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  AlertCircle,
-  CheckCircle2,
-  GitBranch,
-  LoaderCircle,
-  Play,
-} from "lucide-react";
+import { GitBranch } from "lucide-react";
 import { createAnalysisAction } from "../actions";
 import type { Analysis, Repository, WorkspaceStatus } from "../services";
+import AnalysisStatusBadge from "./AnalysisStatusBadge";
+import RepositoryAnalysisRow from "./RepositoryAnalysisRow";
 
-type AnalysisStatus = Analysis["status"];
+type AnalysisStatus = Analysis["status"] | "waiting";
 
-const statusCopy: Record<AnalysisStatus | "waiting", string> = {
-  waiting: "Ready to start analysis",
-  pending: "Queued for analysis",
-  processing: "Analyzing your codebase",
-  completed: "Codebase map is ready",
-  failed: "Analysis needs attention",
-};
+function getHeaderAnalysisStatus(
+  workspaceStatus: WorkspaceStatus,
+  repositories: Repository[],
+  analyses: Analysis[],
+): AnalysisStatus {
+  if (workspaceStatus === "EMPTY" || repositories.length === 0) {
+    return "waiting";
+  }
+
+  const analysisStatuses = new Set(analyses.map((analysis) => analysis.status));
+
+  if (analysisStatuses.has("processing")) return "processing";
+  if (analysisStatuses.has("failed")) return "failed";
+  if (analysisStatuses.has("completed")) return "completed";
+
+  return "waiting";
+}
 
 export default function AnalysisSection({
   status,
@@ -39,22 +45,8 @@ export default function AnalysisSection({
   >(null);
 
   const isEmpty = status === "EMPTY" || repositories.length === 0;
-  const analysisStatuses = analyses.map((analysis) => analysis.status);
-  const hasProcessingAnalysis = analysisStatuses.includes("processing");
-  const hasFailedAnalysis = analysisStatuses.includes("failed");
-  const hasCompletedAnalysis = analysisStatuses.includes("completed");
-  const headerStatus: AnalysisStatus | "waiting" = isEmpty
-    ? "waiting"
-    : hasProcessingAnalysis
-      ? "processing"
-      : hasFailedAnalysis
-        ? "failed"
-        : hasCompletedAnalysis
-          ? "completed"
-          : "waiting";
+  const headerStatus = getHeaderAnalysisStatus(status, repositories, analyses);
   const isAnalyzing = headerStatus === "processing";
-  const isReady = headerStatus === "completed";
-  const isFailed = headerStatus === "failed";
 
   async function handleAnalyze(repositoryId: string) {
     setAnalyzingRepositoryId(repositoryId);
@@ -66,14 +58,6 @@ export default function AnalysisSection({
       setAnalyzingRepositoryId(null);
     }
   }
-
-  const statusTone = isFailed
-    ? "border-red-200 bg-red-50 text-red-700"
-    : isReady
-      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-      : isAnalyzing
-        ? "border-blue-200 bg-blue-50 text-blue-700"
-        : "border-amber-200 bg-amber-50 text-amber-700";
 
   return (
     <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
@@ -91,17 +75,7 @@ export default function AnalysisSection({
           </p>
         </div>
 
-        <span
-          className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold ${statusTone}`}
-        >
-          {isAnalyzing && <LoaderCircle className="size-3.5 animate-spin" />}
-          {isReady && <CheckCircle2 className="size-3.5" />}
-          {isFailed && <AlertCircle className="size-3.5" />}
-          {!isAnalyzing && !isReady && !isFailed && (
-            <GitBranch className="size-3.5" />
-          )}
-          {statusCopy[headerStatus]}
-        </span>
+        <AnalysisStatusBadge status={headerStatus} />
       </div>
 
       <div className="mt-6 overflow-hidden rounded-xl border border-border bg-background">
@@ -136,66 +110,18 @@ export default function AnalysisSection({
           </div>
         ) : (
           <div className="divide-y divide-border">
-            {repositories.map((repository) => {
-              const analysis = analyses.find(
-                (item) => item.repository_id === repository.id,
-              );
-              const analysisStatus = analysis?.status ?? "waiting";
-              const isRepositoryAnalyzing =
-                analyzingRepositoryId === repository.id ||
-                analysisStatus === "processing";
-
-              return (
-                <div
-                  key={repository.id}
-                  className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div className="flex min-w-0 items-start gap-3">
-                    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-                      <GitBranch className="size-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-foreground">
-                        {repository.name}
-                      </p>
-                      <p className="mt-1 truncate text-xs text-muted-foreground">
-                        {repository.provider} · {repository.branch}
-                      </p>
-                      <p className="mt-1 truncate text-xs text-muted-foreground">
-                        {repository.url}
-                      </p>
-                      <p className="mt-2 text-xs font-medium text-muted-foreground">
-                        {statusCopy[analysisStatus]}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    disabled={
-                      isAnalyzing ||
-                      isRepositoryAnalyzing ||
-                      analysisStatus === "pending"
-                    }
-                    onClick={() => handleAnalyze(repository.id)}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {isRepositoryAnalyzing ? (
-                      <LoaderCircle className="size-4 animate-spin" />
-                    ) : (
-                      <Play className="size-4 fill-current" />
-                    )}
-                    {analysisStatus === "pending"
-                      ? "Queued"
-                      : isRepositoryAnalyzing
-                        ? "Analyzing..."
-                        : analysisStatus === "completed"
-                          ? "Analyze again"
-                          : "Analyze"}
-                  </button>
-                </div>
-              );
-            })}
+            {repositories.map((repository) => (
+              <RepositoryAnalysisRow
+                key={repository.id}
+                repository={repository}
+                analysis={analyses.find(
+                  (item) => item.repository_id === repository.id,
+                )}
+                isWorkspaceAnalyzing={isAnalyzing}
+                isSubmitting={analyzingRepositoryId === repository.id}
+                onAnalyze={handleAnalyze}
+              />
+            ))}
           </div>
         )}
       </div>
