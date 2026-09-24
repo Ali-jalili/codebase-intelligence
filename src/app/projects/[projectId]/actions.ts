@@ -73,5 +73,7 @@ export async function createRepositoryAction(
 }
 
 export async function createAnalysisAction(repositoryId: string) {
-  createAnalysis(repositoryId);
+  const analysis = await createAnalysis(repositoryId);
+
+  return analysis;
 }
