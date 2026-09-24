@@ -1,6 +1,9 @@
 /** @format */
 
-import type { WorkspaceStatus } from "../services";
+"use client";
+
+import { createAnalysisAction } from "../actions";
+import type { Repository, WorkspaceStatus } from "../services";
 
 const statusCopy: Record<WorkspaceStatus, string> = {
   EMPTY: "Waiting for repository",
@@ -12,8 +15,10 @@ const statusCopy: Record<WorkspaceStatus, string> = {
 
 export default function AnalysisSection({
   status,
+  repositories,
 }: {
   status: WorkspaceStatus;
+  repositories: Repository[];
 }) {
   return (
     <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
@@ -30,6 +35,17 @@ export default function AnalysisSection({
           <span className="text-sm font-medium text-foreground">
             {statusCopy[status]}
           </span>
+
+          {repositories.map((repository) => (
+            <button
+              key={repository.id}
+              onClick={() => {
+                createAnalysisAction(repository.id);
+              }}
+            >
+              Analyze
+            </button>
+          ))}
         </div>
       </div>
     </section>

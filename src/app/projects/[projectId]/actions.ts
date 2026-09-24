@@ -71,3 +71,5 @@ export async function createRepositoryAction(
     };
   }
 }
+
+export async function createAnalysisAction(repositoryId: string) {}

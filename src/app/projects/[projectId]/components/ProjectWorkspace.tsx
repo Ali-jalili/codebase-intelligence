@@ -49,7 +49,10 @@ export default function ProjectWorkspace({
         </div>
 
         <div id="analysis">
-          <AnalysisSection status={workspace.status} />
+          <AnalysisSection
+            repositories={workspace.repositories}
+            status={workspace.status}
+          />
         </div>
 
         <div id="insights">

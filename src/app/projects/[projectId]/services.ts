@@ -87,3 +87,5 @@ export async function getWorkspaceState(
     repositories,
   };
 }
+
+export async function createAnalysis() {}
