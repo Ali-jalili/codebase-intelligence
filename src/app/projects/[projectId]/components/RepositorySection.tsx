@@ -26,7 +26,7 @@ export default function RepositorySection({
   }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const repository = workspace.repository;
+  const repositories = workspace.repositories;
   const isEmpty = workspace.status === "EMPTY";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -65,7 +65,7 @@ export default function RepositorySection({
               Step 01
             </p>
             <h2 className="mt-2 text-lg font-semibold text-foreground">
-              Connect your source
+              Repositories
             </h2>
 
             <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
@@ -94,16 +94,34 @@ export default function RepositorySection({
                 <GitBranch className="size-5" />
               )}
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-foreground">
-                {!isEmpty ? "Repository connected" : "No repository connected"}
-              </h3>
-
-              <p className="mt-1 text-sm text-muted-foreground">
-                {!isEmpty
-                  ? `${repository.url} · ${repository.branch}`
-                  : "Add a GitHub repository to begin the analysis."}
-              </p>
+            <div className="min-w-0">
+              {isEmpty ? (
+                <>
+                  <h3 className="text-sm font-medium text-foreground">
+                    No repositories connected
+                  </h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Add a GitHub repository to begin the analysis.
+                  </p>
+                </>
+              ) : (
+                <div className="space-y-3">
+                  <h3 className="text-sm font-medium text-foreground">
+                    Connected repositories
+                  </h3>
+                  {repositories.map((repository) => (
+                    <div key={repository.id} className="text-sm">
+                      <p className="font-medium text-foreground">
+                        {repository.name}
+                      </p>
+                      <p className="mt-1 break-all text-muted-foreground">
+                        {repository.provider} · {repository.url} ·{" "}
+                        {repository.branch}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -112,7 +130,7 @@ export default function RepositorySection({
             onClick={() => setIsOpen(true)}
             className="inline-flex w-full shrink-0 items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto"
           >
-            {!isEmpty ? "Change repository" : "Connect repository"}
+            + Add repository
           </button>
         </div>
       </section>
@@ -170,7 +188,6 @@ export default function RepositorySection({
                   name="url"
                   type="url"
                   required
-                  defaultValue={repository?.url}
                   aria-invalid={Boolean(fieldErrors.url)}
                   aria-describedby={
                     fieldErrors.url ? "repository-url-error" : undefined

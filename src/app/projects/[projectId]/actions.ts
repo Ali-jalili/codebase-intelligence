@@ -59,28 +59,12 @@ export async function createRepositoryAction(
   try {
     const repository = await createRepository({
       projectId,
-      userId: user.id,
       url,
       branch,
     });
     revalidatePath(`/projects/${projectId}`);
     return { success: true, data: repository };
-  } catch (error) {
-    const databaseError = error as {
-      code?: string;
-      constraint?: string;
-    };
-
-    if (
-      databaseError.code === "23505" ||
-      databaseError.constraint === "repositories_project_id_unique"
-    ) {
-      return {
-        success: false,
-        error: "This project already has a connected repository.",
-      };
-    }
-
+  } catch {
     return {
       success: false,
       error: "We could not connect this repository. Please try again.",

@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 export type Repository = {
   id: string;
   project_id: string;
-  user_id: string;
+  name: string;
+  provider: string;
   url: string;
   branch: string;
   created_at: string;
@@ -21,24 +22,31 @@ export type WorkspaceStatus =
 
 export type WorkspaceState = {
   status: WorkspaceStatus;
-  repository: Repository | null;
+  repositories: Repository[];
 };
 
 type CreateRepositoryData = {
   projectId: string;
-  userId: string;
   url: string;
   branch: string;
 };
 
 export async function createRepository(data: CreateRepositoryData) {
   const supabase = await createClient();
+  const repositoryUrl = new URL(data.url);
+  const repositoryName =
+    repositoryUrl.pathname
+      .split("/")
+      .filter(Boolean)
+      .pop()
+      ?.replace(/\.git$/, "") || "repository";
 
   const { data: repository, error } = await supabase
     .from("repositories")
     .insert({
       project_id: data.projectId,
-      user_id: data.userId,
+      name: repositoryName,
+      provider: "github",
       url: data.url,
       branch: data.branch,
     })
@@ -50,33 +58,32 @@ export async function createRepository(data: CreateRepositoryData) {
   return repository as Repository;
 }
 
-export async function getRepositoryForProject(projectId: string) {
+export async function getRepositoriesForProject(projectId: string) {
   const supabase = await createClient();
 
-  const { data: repository, error } = await supabase
+  const { data: repositories, error } = await supabase
     .from("repositories")
     .select("*")
-    .eq("project_id", projectId)
-    .maybeSingle();
+    .eq("project_id", projectId);
 
   if (error) throw error;
 
-  return repository as Repository | null;
+  return (repositories ?? []) as Repository[];
 }
 
 export function getWorkspaceStatus(
-  repository: Repository | null,
+  repositories: Repository[],
 ): WorkspaceStatus {
-  return repository ? "REPOSITORY_CONNECTED" : "EMPTY";
+  return repositories.length === 0 ? "EMPTY" : "REPOSITORY_CONNECTED";
 }
 
 export async function getWorkspaceState(
   projectId: string,
 ): Promise<WorkspaceState> {
-  const repository = await getRepositoryForProject(projectId);
+  const repositories = await getRepositoriesForProject(projectId);
 
   return {
-    status: getWorkspaceStatus(repository),
-    repository,
+    status: getWorkspaceStatus(repositories),
+    repositories,
   };
 }
