@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GitBranch } from "lucide-react";
 import { createAnalysisAction } from "@/features/analysis/actions";
@@ -43,13 +43,38 @@ export default function AnalysisSection({
   const isEmpty = status === "EMPTY" || repositories.length === 0;
   const headerStatus = getHeaderAnalysisStatus(status, repositories, analyses);
   const isAnalyzing = headerStatus === "processing";
+  const activeAnalysis = analyzingRepositoryId
+    ? analyses.find(
+        (analysis) => analysis.repository_id === analyzingRepositoryId,
+      )
+    : undefined;
+
+  useEffect(() => {
+    if (!analyzingRepositoryId) return;
+
+    if (
+      activeAnalysis?.status === "completed" ||
+      activeAnalysis?.status === "failed"
+    ) {
+      setAnalyzingRepositoryId(null);
+      return;
+    }
+
+    const refreshInterval = window.setInterval(() => {
+      router.refresh();
+    }, 2000);
+
+    return () => window.clearInterval(refreshInterval);
+  }, [activeAnalysis?.status, analyzingRepositoryId, router]);
+
   async function handleAnalyze(repositoryId: string) {
     setAnalyzingRepositoryId(repositoryId);
     try {
       await createAnalysisAction(repositoryId);
       router.refresh();
-    } finally {
+    } catch (error) {
       setAnalyzingRepositoryId(null);
+      throw error;
     }
   }
   return (
@@ -107,7 +132,6 @@ export default function AnalysisSection({
                 analysis={analyses.find(
                   (item) => item.repository_id === repository.id,
                 )}
-                isWorkspaceAnalyzing={isAnalyzing}
                 isSubmitting={analyzingRepositoryId === repository.id}
                 onAnalyze={handleAnalyze}
               />

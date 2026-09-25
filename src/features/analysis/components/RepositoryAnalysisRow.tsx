@@ -10,21 +10,19 @@ import AnalysisStatusBadge, {
 interface RepositoryAnalysisRowProps {
   repository: Repository;
   analysis?: Analysis;
-  isWorkspaceAnalyzing: boolean;
   isSubmitting: boolean;
   onAnalyze: (repositoryId: string) => void;
 }
 export default function RepositoryAnalysisRow({
   repository,
   analysis,
-  isWorkspaceAnalyzing,
   isSubmitting,
   onAnalyze,
 }: RepositoryAnalysisRowProps) {
   const analysisStatus: AnalysisStatus = analysis?.status ?? "waiting";
   const isProcessing = analysisStatus === "processing" || isSubmitting;
   const isQueued = analysisStatus === "pending";
-  const isDisabled = isWorkspaceAnalyzing || isProcessing || isQueued;
+  const isDisabled = isProcessing || isQueued;
   return (
     <div className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
