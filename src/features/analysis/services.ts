@@ -7,6 +7,7 @@ import type {
   WorkspaceState,
   WorkspaceStatus,
 } from "@/features/projects/types";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export function getWorkspaceStatus(
   repositories: Awaited<ReturnType<typeof getRepositoriesForProject>>,
@@ -45,4 +46,22 @@ export async function getWorkspaceState(
   const repositoryIds = repositories.map((repository) => repository.id);
   const analyses = await getAnalysisForRepositories(repositoryIds);
   return { status: getWorkspaceStatus(repositories), repositories, analyses };
+}
+
+export async function updateAnalysisStatus(
+  analysisId: string,
+  status: Analysis["status"],
+) {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("analyses")
+    .update({ status })
+    .eq("id", analysisId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
 }

@@ -2,7 +2,7 @@
 
 "use server";
 
-import { analyzeRepositoryTask } from "@/trigger-old/analyze-repository";
+import { analyzeRepositoryTask } from "@/trigger/analyze-repository";
 import { createAnalysis } from "./services";
 
 export async function createAnalysisAction(repositoryId: string) {
