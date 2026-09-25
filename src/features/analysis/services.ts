@@ -34,7 +34,8 @@ export async function getAnalysisForRepositories(
   const { data: analyses, error } = await supabase
     .from("analyses")
     .select("*")
-    .in("repository_id", repositoryIds);
+    .in("repository_id", repositoryIds)
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return (analyses ?? []) as Analysis[];
 }

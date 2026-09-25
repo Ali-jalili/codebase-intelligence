@@ -13,6 +13,11 @@ import AnalysisStatusBadge from "./AnalysisStatusBadge";
 import RepositoryAnalysisRow from "./RepositoryAnalysisRow";
 
 type AnalysisStatus = Analysis["status"] | "waiting";
+type AnalysisSubmission = {
+  repositoryId: string;
+  analysisId: string | null;
+};
+
 function getHeaderAnalysisStatus(
   workspaceStatus: WorkspaceStatus,
   repositories: Repository[],
@@ -37,26 +42,26 @@ export default function AnalysisSection({
   analyses: Analysis[];
 }) {
   const router = useRouter();
-  const [analyzingRepositoryId, setAnalyzingRepositoryId] = useState<
-    string | null
-  >(null);
+  const [analysisSubmission, setAnalysisSubmission] =
+    useState<AnalysisSubmission | null>(null);
   const isEmpty = status === "EMPTY" || repositories.length === 0;
   const headerStatus = getHeaderAnalysisStatus(status, repositories, analyses);
-  const isAnalyzing = headerStatus === "processing";
-  const activeAnalysis = analyzingRepositoryId
-    ? analyses.find(
-        (analysis) => analysis.repository_id === analyzingRepositoryId,
-      )
+  const activeAnalysis = analysisSubmission?.analysisId
+    ? analyses.find((analysis) => analysis.id === analysisSubmission.analysisId)
     : undefined;
+  const isSubmissionActive =
+    analysisSubmission !== null &&
+    activeAnalysis?.status !== "completed" &&
+    activeAnalysis?.status !== "failed";
+  const isAnalyzing = isSubmissionActive || headerStatus === "processing";
 
   useEffect(() => {
-    if (!analyzingRepositoryId) return;
+    if (!analysisSubmission) return;
 
     if (
       activeAnalysis?.status === "completed" ||
       activeAnalysis?.status === "failed"
     ) {
-      setAnalyzingRepositoryId(null);
       return;
     }
 
@@ -65,15 +70,16 @@ export default function AnalysisSection({
     }, 2000);
 
     return () => window.clearInterval(refreshInterval);
-  }, [activeAnalysis?.status, analyzingRepositoryId, router]);
+  }, [activeAnalysis?.status, analysisSubmission, router]);
 
   async function handleAnalyze(repositoryId: string) {
-    setAnalyzingRepositoryId(repositoryId);
+    setAnalysisSubmission({ repositoryId, analysisId: null });
     try {
-      await createAnalysisAction(repositoryId);
+      const analysis = await createAnalysisAction(repositoryId);
+      setAnalysisSubmission({ repositoryId, analysisId: analysis.id });
       router.refresh();
     } catch (error) {
-      setAnalyzingRepositoryId(null);
+      setAnalysisSubmission(null);
       throw error;
     }
   }
@@ -125,17 +131,35 @@ export default function AnalysisSection({
           </div>
         ) : (
           <div className="divide-y divide-border">
-            {repositories.map((repository) => (
-              <RepositoryAnalysisRow
-                key={repository.id}
-                repository={repository}
-                analysis={analyses.find(
+            {repositories.map((repository) =>
+              (() => {
+                const analysis = analyses.find(
                   (item) => item.repository_id === repository.id,
-                )}
-                isSubmitting={analyzingRepositoryId === repository.id}
-                onAnalyze={handleAnalyze}
-              />
-            ))}
+                );
+                const isSubmitting =
+                  analysisSubmission?.repositoryId === repository.id &&
+                  (analysisSubmission.analysisId === null ||
+                    analysis?.id !== analysisSubmission.analysisId ||
+                    (analysis.status !== "completed" &&
+                      analysis.status !== "failed"));
+                const statusOverride =
+                  isSubmitting &&
+                  analysis?.id !== analysisSubmission?.analysisId
+                    ? "processing"
+                    : undefined;
+
+                return (
+                  <RepositoryAnalysisRow
+                    key={repository.id}
+                    repository={repository}
+                    analysis={analysis}
+                    isSubmitting={isSubmitting}
+                    statusOverride={statusOverride}
+                    onAnalyze={handleAnalyze}
+                  />
+                );
+              })(),
+            )}
           </div>
         )}
       </div>

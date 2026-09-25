@@ -7,10 +7,20 @@ export const analyzeRepositoryTask = task({
   id: "analyze-repository",
 
   run: async (payload: { analysisId: string; repositoryId: string }) => {
-    await updateAnalysisStatus(payload.analysisId, "processing");
+    try {
+      await updateAnalysisStatus(payload.analysisId, "processing");
 
-    return {
-      success: true,
-    };
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
+      await updateAnalysisStatus(payload.analysisId, "completed");
+
+      return {
+        success: true,
+      };
+    } catch (error) {
+      await updateAnalysisStatus(payload.analysisId, "failed");
+
+      throw error;
+    }
   },
 });
