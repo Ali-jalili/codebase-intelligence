@@ -6,9 +6,11 @@ import {
   GitBranch,
   LoaderCircle,
 } from "lucide-react";
+
 import type { Analysis } from "@/features/analysis/types";
 
 export type AnalysisStatus = Analysis["status"] | "waiting";
+
 const statusCopy: Record<AnalysisStatus, string> = {
   waiting: "Ready to start analysis",
   pending: "Queued for analysis",
@@ -16,9 +18,11 @@ const statusCopy: Record<AnalysisStatus, string> = {
   completed: "Codebase map is ready",
   failed: "Analysis needs attention",
 };
+
 interface AnalysisStatusBadgeProps {
   status: AnalysisStatus;
 }
+
 export default function AnalysisStatusBadge({
   status,
 }: AnalysisStatusBadgeProps) {
@@ -30,6 +34,7 @@ export default function AnalysisStatusBadge({
         : status === "processing"
           ? "border-blue-200 bg-blue-50 text-blue-700"
           : "border-amber-200 bg-amber-50 text-amber-700";
+
   return (
     <span
       className={`inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold ${statusTone}`}
