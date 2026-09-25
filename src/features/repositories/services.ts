@@ -10,9 +10,11 @@ export async function createRepository(data: {
   branch: string;
 }) {
   const supabase = await createClient();
-  const repositoryUrl = new URL(data.url);
+  const repositoryPath = data.url.startsWith("git@github.com:")
+    ? data.url.slice("git@github.com:".length)
+    : new URL(data.url).pathname;
   const repositoryName =
-    repositoryUrl.pathname
+    repositoryPath
       .split("/")
       .filter(Boolean)
       .pop()

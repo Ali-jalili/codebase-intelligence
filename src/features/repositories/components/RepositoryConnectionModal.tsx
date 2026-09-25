@@ -100,7 +100,7 @@ export default function RepositoryConnectionModal({
             <input
               id="repository-url"
               name="url"
-              type="url"
+              type="text"
               required
               aria-invalid={Boolean(fieldErrors.url)}
               aria-describedby={

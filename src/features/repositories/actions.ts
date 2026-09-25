@@ -21,12 +21,15 @@ export async function createRepositoryAction(
   if (!projectId)
     return { success: false, error: "Project context is missing." };
   try {
-    const repositoryUrl = new URL(url);
-    if (
-      !["http:", "https:"].includes(repositoryUrl.protocol) ||
-      !["github.com", "www.github.com"].includes(repositoryUrl.hostname)
-    )
+    const isHttpsGithub =
+      url.startsWith("https://github.com/") ||
+      url.startsWith("https://www.github.com/");
+
+    const isSshGithub = url.startsWith("git@github.com:");
+
+    if (!isHttpsGithub && !isSshGithub) {
       throw new Error("invalid_repository_url");
+    }
   } catch {
     return {
       success: false,
