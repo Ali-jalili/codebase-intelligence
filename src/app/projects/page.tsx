@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 
-import { getProjects } from "./services";
+import { getProjects } from "@/features/projects/services";
 
-import ProjectCard from "./components/ProjectCard";
-import EmptyProjects from "./components/EmptyProjects";
+import ProjectCard from "@/features/projects/components/ProjectCard";
+import EmptyProjects from "@/features/projects/components/EmptyProjects";
 
 export default async function ProjectsPage() {
   const projects = await getProjects();

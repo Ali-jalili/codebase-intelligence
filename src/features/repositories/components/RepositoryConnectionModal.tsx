@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, X } from "lucide-react";
 import { toast } from "sonner";
-import { createRepositoryAction } from "../actions";
+import { createRepositoryAction } from "@/features/repositories/actions";
 
 interface RepositoryConnectionModalProps {
   projectId: string;
@@ -26,19 +26,15 @@ export default function RepositoryConnectionModal({
   }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
   if (!isOpen) return null;
-
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFieldErrors({});
     setIsSubmitting(true);
-
     try {
       const result = await createRepositoryAction(
         new FormData(event.currentTarget),
       );
-
       if (!result.success) {
         setFieldErrors(
           result.field
@@ -47,7 +43,6 @@ export default function RepositoryConnectionModal({
         );
         return;
       }
-
       onClose();
       toast.success("Repository connected. Your codebase is ready to analyze.");
       router.refresh();
@@ -55,7 +50,6 @@ export default function RepositoryConnectionModal({
       setIsSubmitting(false);
     }
   }
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 px-4 py-6"
@@ -94,7 +88,6 @@ export default function RepositoryConnectionModal({
             <X className="size-5" />
           </button>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-5 px-6 py-6">
           <input type="hidden" name="projectId" value={projectId} />
           <div className="space-y-2">
@@ -125,7 +118,6 @@ export default function RepositoryConnectionModal({
               Use a public GitHub repository URL for now.
             </p>
           </div>
-
           {fieldErrors.form && (
             <div
               role="alert"
@@ -135,7 +127,6 @@ export default function RepositoryConnectionModal({
               <span>{fieldErrors.form}</span>
             </div>
           )}
-
           <div className="space-y-2">
             <label
               htmlFor="repository-branch"
@@ -163,7 +154,6 @@ export default function RepositoryConnectionModal({
               </p>
             )}
           </div>
-
           <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
             <button
               type="button"

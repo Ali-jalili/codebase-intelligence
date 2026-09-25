@@ -4,16 +4,13 @@
 
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
-
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-
-import { handleSignUp } from "@/actions/auth";
-import AuthCard from "@/components/AuthCard";
+import { handleSignUp } from "@/features/auth/actions";
+import AuthCard from "./AuthCard";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
-
   return (
     <button
       type="submit"
@@ -21,7 +18,6 @@ function SubmitButton() {
       className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-medium text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending && <Loader2 className="size-4 animate-spin" />}
-
       {pending ? "Creating account..." : "Create Account"}
     </button>
   );
@@ -32,14 +28,11 @@ export default function SignupPage() {
 
   async function handleSignupSubmit(formData: FormData) {
     const result = await handleSignUp(formData);
-
     if (!result.success) {
       toast.error(result.error);
       return;
     }
-
     toast.success("Account created successfully");
-
     router.push(result.redirectTo ?? "/projects/new");
   }
 
@@ -52,7 +45,6 @@ export default function SignupPage() {
         <form className="space-y-5" action={handleSignupSubmit}>
           <div className="space-y-2">
             <label className="text-sm text-foreground">Name</label>
-
             <input
               type="text"
               name="name"
@@ -61,10 +53,8 @@ export default function SignupPage() {
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
           </div>
-
           <div className="space-y-2">
             <label className="text-sm text-foreground">Email</label>
-
             <input
               type="email"
               name="email"
@@ -73,10 +63,8 @@ export default function SignupPage() {
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
           </div>
-
           <div className="space-y-2">
             <label className="text-sm text-foreground">Password</label>
-
             <input
               type="password"
               name="password"
@@ -86,10 +74,8 @@ export default function SignupPage() {
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
           </div>
-
           <div className="space-y-2">
             <label className="text-sm text-foreground">Confirm Password</label>
-
             <input
               type="password"
               name="confirmPassword"
@@ -98,7 +84,6 @@ export default function SignupPage() {
               className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary"
             />
           </div>
-
           <SubmitButton />
         </form>
       </AuthCard>

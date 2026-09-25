@@ -5,7 +5,7 @@
 import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 
-import { handleLogout } from "@/actions/auth";
+import { handleLogout } from "@/features/auth/actions";
 import Link from "next/dist/client/link";
 
 type DashboardNavbarProps = {

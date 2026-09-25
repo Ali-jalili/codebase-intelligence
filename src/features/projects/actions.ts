@@ -1,20 +1,17 @@
 /** @format */
 "use server";
 
-import { getCurrentUser } from "@/actions/auth";
-
+import { getCurrentUser } from "@/features/auth/actions";
 import { createProject as createProjectInDb } from "./services";
 
 interface CreateProjectSuccess {
   success: true;
 }
-
 interface CreateProjectFailure {
   success: false;
   error: string;
   field?: string;
 }
-
 type CreateProjectResult = CreateProjectSuccess | CreateProjectFailure;
 
 export async function createProjectAction(
@@ -22,36 +19,18 @@ export async function createProjectAction(
 ): Promise<CreateProjectResult> {
   const name = formData.get("name")?.toString() ?? "";
   const description = formData.get("description")?.toString() ?? "";
-
   const projectName = name.trim();
-
-  if (!projectName) {
-    return {
-      success: false,
-      error: "Project name is required",
-      field: "name",
-    };
-  }
-
+  if (!projectName)
+    return { success: false, error: "Project name is required", field: "name" };
   const user = await getCurrentUser();
-
-  if (!user) {
-    return {
-      success: false,
-      error: "Unauthorized",
-    };
-  }
-
+  if (!user) return { success: false, error: "Unauthorized" };
   try {
     await createProjectInDb({
       userId: user.id,
       name: projectName,
       description: description.trim() || null,
     });
-
-    return {
-      success: true,
-    };
+    return { success: true };
   } catch (error) {
     if (
       error &&
@@ -65,10 +44,6 @@ export async function createProjectAction(
         field: "name",
       };
     }
-
-    return {
-      success: false,
-      error: "Failed to create project",
-    };
+    return { success: false, error: "Failed to create project" };
   }
 }

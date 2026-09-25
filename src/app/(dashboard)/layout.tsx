@@ -1,6 +1,6 @@
 /** @format */
 
-import { getCurrentUser } from "@/actions/auth";
+import { getCurrentUser } from "@/features/auth/actions";
 import DashboardNavbar from "@/components/DashboardNavbar";
 
 export default async function DashboardLayout({

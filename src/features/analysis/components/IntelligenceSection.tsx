@@ -1,6 +1,6 @@
 /** @format */
 
-import type { WorkspaceStatus } from "../services";
+import type { WorkspaceStatus } from "@/features/projects/types";
 
 export default function IntelligenceSection({
   status,
@@ -12,11 +12,9 @@ export default function IntelligenceSection({
       <h2 className="text-lg font-semibold text-foreground">
         Codebase Intelligence
       </h2>
-
       <p className="mt-1 text-sm text-muted-foreground">
         Explore architecture insights generated from your codebase.
       </p>
-
       <div className="mt-6 rounded-xl border border-dashed border-border bg-background p-5">
         <p className="text-sm font-medium text-foreground">
           {status === "READY"

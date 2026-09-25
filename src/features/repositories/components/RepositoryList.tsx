@@ -1,7 +1,7 @@
 /** @format */
 
 import { CheckCircle2, GitBranch } from "lucide-react";
-import type { Repository } from "../services";
+import type { Repository } from "@/features/repositories/types";
 
 interface RepositoryListProps {
   repositories: Repository[];
@@ -9,7 +9,6 @@ interface RepositoryListProps {
 
 export default function RepositoryList({ repositories }: RepositoryListProps) {
   const isEmpty = repositories.length === 0;
-
   return (
     <div className="flex items-start gap-3">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
@@ -19,7 +18,6 @@ export default function RepositoryList({ repositories }: RepositoryListProps) {
           <GitBranch className="size-5" />
         )}
       </div>
-
       <div className="min-w-0">
         {isEmpty ? (
           <>

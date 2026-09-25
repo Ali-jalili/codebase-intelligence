@@ -3,11 +3,7 @@
 import Link from "next/link";
 
 interface ProjectCardProps {
-  project: {
-    id: string;
-    name: string;
-    description: string | null;
-  };
+  project: { id: string; name: string; description: string | null };
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
@@ -21,35 +17,28 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             </span>
           </div>
         </div>
-
         <h2 className="text-base font-semibold text-foreground">
           {project.name}
         </h2>
-
         <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
           {project.description ||
             "Explore and understand this codebase architecture."}
         </p>
-
         <div className="mt-5 space-y-3 rounded-xl border border-border bg-background p-4">
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Repository</span>
-
             <span className="text-xs font-medium text-foreground">
               Not connected
             </span>
           </div>
-
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Status</span>
-
             <span className="text-xs font-medium text-foreground">
               Setup required
             </span>
           </div>
         </div>
       </div>
-
       <div className="mt-6 flex items-center justify-end border-t border-border pt-4">
         <Link
           href={`/projects/${project.id}`}

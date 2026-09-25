@@ -1,6 +1,6 @@
 /** @format */
 
-import { getCurrentUser } from "@/actions/auth";
+import { getCurrentUser } from "@/features/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 
 type CreateProjectData = {
@@ -11,7 +11,6 @@ type CreateProjectData = {
 
 export async function createProject(data: CreateProjectData) {
   const supabase = await createClient();
-
   const { data: project, error } = await supabase
     .from("projects")
     .insert({
@@ -21,72 +20,45 @@ export async function createProject(data: CreateProjectData) {
     })
     .select()
     .single();
-
-  if (error) {
-    throw error;
-  }
-
+  if (error) throw error;
   return project;
 }
 
 export async function getProjects() {
   const user = await getCurrentUser();
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
+  if (!user) throw new Error("User not found");
   const supabase = await createClient();
-
   const { data, error } = await supabase
     .from("projects")
     .select("*")
     .eq("user_id", user.id)
-    .order("created_at", {
-      ascending: false,
-    });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
   return data;
 }
 
 export async function getProjectById(projectId: string) {
   const user = await getCurrentUser();
-
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
-
+  if (!user) throw new Error("Unauthorized");
   const supabase = await createClient();
-
   const { data, error } = await supabase
     .from("projects")
     .select("*")
     .eq("id", projectId)
     .eq("user_id", user.id)
     .single();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
+  if (error) throw new Error(error.message);
   return data;
 }
 
 export async function projectBelongsToUser(projectId: string, userId: string) {
   const supabase = await createClient();
-
   const { data, error } = await supabase
     .from("projects")
     .select("id")
     .eq("id", projectId)
     .eq("user_id", userId)
     .maybeSingle();
-
   if (error) throw error;
-
   return Boolean(data);
 }

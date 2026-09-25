@@ -1,7 +1,8 @@
 /** @format */
 
 import { GitBranch, LoaderCircle, Play } from "lucide-react";
-import type { Analysis, Repository } from "../services";
+import type { Analysis } from "@/features/analysis/types";
+import type { Repository } from "@/features/repositories/types";
 import AnalysisStatusBadge, {
   type AnalysisStatus,
 } from "./AnalysisStatusBadge";
@@ -13,7 +14,6 @@ interface RepositoryAnalysisRowProps {
   isSubmitting: boolean;
   onAnalyze: (repositoryId: string) => void;
 }
-
 export default function RepositoryAnalysisRow({
   repository,
   analysis,
@@ -25,7 +25,6 @@ export default function RepositoryAnalysisRow({
   const isProcessing = analysisStatus === "processing" || isSubmitting;
   const isQueued = analysisStatus === "pending";
   const isDisabled = isWorkspaceAnalyzing || isProcessing || isQueued;
-
   return (
     <div className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
@@ -47,7 +46,6 @@ export default function RepositoryAnalysisRow({
           </div>
         </div>
       </div>
-
       <button
         type="button"
         disabled={isDisabled}

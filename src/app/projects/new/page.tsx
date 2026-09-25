@@ -1,6 +1,6 @@
 /** @format */
 
-import CreateProjectForm from "@/components/CreateProjectForm";
+import CreateProjectForm from "@/features/projects/components/CreateProjectForm";
 
 export default function NewProjectPage() {
   return (
