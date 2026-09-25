@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { Repository } from "./types";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function createRepository(data: {
   projectId: string;
@@ -39,4 +40,20 @@ export async function getRepositoriesForProject(projectId: string) {
     .eq("project_id", projectId);
   if (error) throw error;
   return (repositories ?? []) as Repository[];
+}
+
+export async function getRepositoryById(repositoryId: string) {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("repositories")
+    .select("*")
+    .eq("id", repositoryId)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
