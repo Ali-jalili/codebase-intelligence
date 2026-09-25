@@ -4,7 +4,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/actions/auth";
-import { analyzeRepositoryTask } from "@/trigger/analyze-repository";
+import { analyzeRepositoryTask } from "@/trigger-old/analyze-repository";
 import { createAnalysis, createRepository, type Repository } from "./services";
 import { projectBelongsToUser } from "../services";
 
