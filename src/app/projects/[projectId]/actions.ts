@@ -4,8 +4,9 @@
 
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/actions/auth";
-import { projectBelongsToUser } from "../services";
+import { analyzeRepositoryTask } from "@/trigger/analyze-repository";
 import { createAnalysis, createRepository, type Repository } from "./services";
+import { projectBelongsToUser } from "../services";
 
 type RepositoryResult =
   | { success: true; data: Repository }
@@ -74,6 +75,10 @@ export async function createRepositoryAction(
 
 export async function createAnalysisAction(repositoryId: string) {
   const analysis = await createAnalysis(repositoryId);
+  await analyzeRepositoryTask.trigger({
+    analysisId: analysis.id,
+    repositoryId,
+  });
 
   return analysis;
 }

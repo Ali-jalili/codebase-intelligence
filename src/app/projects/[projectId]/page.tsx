@@ -1,8 +1,8 @@
 /** @format */
 
-import { getProjectById } from "../services";
 import { getWorkspaceState } from "./services";
 import ProjectWorkspace from "./components/ProjectWorkspace";
+import { getProjectById } from "../services";
 
 export default async function ProjectPage({
   params,

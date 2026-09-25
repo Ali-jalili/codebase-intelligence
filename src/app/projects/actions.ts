@@ -4,6 +4,7 @@
 import { getCurrentUser } from "@/actions/auth";
 
 import { createProject as createProjectInDb } from "./services";
+
 interface CreateProjectSuccess {
   success: true;
 }
