@@ -24,7 +24,7 @@ export default function Hero() {
               Repository intelligence
             </div>
 
-            <h1 className="text-5xl font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.5rem]">
+            <h1 className="text-4xl font-semibold leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-[4.5rem]">
               Your codebase,
               <span className="block text-primary">made legible.</span>
             </h1>
@@ -70,21 +70,22 @@ export default function Hero() {
           <div className="relative mx-auto w-full max-w-[650px] lg:ml-auto">
             <div className="absolute -inset-8 -z-10 bg-[radial-gradient(ellipse_at_55%_45%,rgba(206,220,255,0.58),transparent_68%)]" />
             <div className="overflow-hidden rounded-lg border border-[#dce3f1] bg-white shadow-[0_28px_80px_-38px_rgba(20,40,90,0.35)]">
-              <div className="flex h-12 items-center justify-between border-b border-[#e9edf5] px-4 sm:px-5">
-                <div className="flex items-center gap-2.5">
+              <div className="flex h-12 items-center justify-between gap-3 border-b border-[#e9edf5] px-3 sm:gap-4 sm:px-5">
+                <div className="flex min-w-0 items-center gap-2 sm:gap-2.5">
                   <span className="grid size-6 place-items-center rounded bg-[#edf2ff] text-primary">
                     <GitBranch size={14} />
                   </span>
-                  <span className="text-xs font-semibold text-foreground">
+                  <span className="max-w-[92px] truncate text-xs font-semibold text-foreground sm:max-w-none">
                     nexus-platform
                   </span>
-                  <span className="rounded bg-[#f2f4f8] px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  <span className="hidden rounded bg-[#f2f4f8] px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground sm:inline-flex">
                     main
                   </span>
                 </div>
-                <span className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
+                <span className="flex shrink-0 items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
                   <span className="size-1.5 rounded-full bg-[#88bd2f]" />{" "}
-                  ANALYSIS READY
+                  <span className="sm:hidden">READY</span>
+                  <span className="hidden sm:inline">ANALYSIS READY</span>
                 </span>
               </div>
 
