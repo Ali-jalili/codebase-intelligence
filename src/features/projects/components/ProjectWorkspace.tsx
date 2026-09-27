@@ -15,38 +15,49 @@ export default function ProjectWorkspace({
   project,
   workspace,
 }: ProjectWorkspaceProps) {
+  const hasRepositories = workspace.repositories.length > 0;
+
   return (
     <main className="min-h-[calc(100vh-4rem)] px-6 py-12">
       <div className="mx-auto max-w-5xl space-y-6">
         <ProjectHeader project={project} />
-        <nav className="flex gap-1 overflow-x-auto border-b border-border pb-px">
-          {[
-            ["Codebase map", "#map"],
-            ["Analysis", "#analysis"],
-            ["Insights", "#insights"],
-          ].map(([label, href], index) => (
-            <a
-              key={href}
-              href={href}
-              className={`whitespace-nowrap border-b-2 px-3 py-3 text-sm font-medium transition-colors ${index === 0 ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"}`}
+        {hasRepositories ? (
+          <>
+            <nav
+              aria-label="Codebase sections"
+              className="flex gap-1 overflow-x-auto border-b border-border pb-px"
             >
-              {label}
-            </a>
-          ))}
-        </nav>
-        <div id="map">
+              {[
+                ["Codebase map", "#map"],
+                ["Analysis", "#analysis"],
+                ["Insights", "#insights"],
+              ].map(([label, href], index) => (
+                <a
+                  key={href}
+                  href={href}
+                  className={`whitespace-nowrap border-b-2 px-3 py-3 text-sm font-medium transition-colors ${index === 0 ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"}`}
+                >
+                  {label}
+                </a>
+              ))}
+            </nav>
+            <div id="map">
+              <RepositorySection projectId={project.id} workspace={workspace} />
+            </div>
+            <div id="analysis">
+              <AnalysisSection
+                repositories={workspace.repositories}
+                analyses={workspace.analyses}
+                status={workspace.status}
+              />
+            </div>
+            <div id="insights">
+              <IntelligenceSection status={workspace.status} />
+            </div>
+          </>
+        ) : (
           <RepositorySection projectId={project.id} workspace={workspace} />
-        </div>
-        <div id="analysis">
-          <AnalysisSection
-            repositories={workspace.repositories}
-            analyses={workspace.analyses}
-            status={workspace.status}
-          />
-        </div>
-        <div id="insights">
-          <IntelligenceSection status={workspace.status} />
-        </div>
+        )}
       </div>
     </main>
   );

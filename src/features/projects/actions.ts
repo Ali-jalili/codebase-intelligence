@@ -6,6 +6,7 @@ import { createProject as createProjectInDb } from "./services";
 
 interface CreateProjectSuccess {
   success: true;
+  projectId: string;
 }
 interface CreateProjectFailure {
   success: false;
@@ -25,12 +26,12 @@ export async function createProjectAction(
   const user = await getCurrentUser();
   if (!user) return { success: false, error: "Unauthorized" };
   try {
-    await createProjectInDb({
+    const project = await createProjectInDb({
       userId: user.id,
       name: projectName,
       description: description.trim() || null,
     });
-    return { success: true };
+    return { success: true, projectId: project.id };
   } catch (error) {
     if (
       error &&

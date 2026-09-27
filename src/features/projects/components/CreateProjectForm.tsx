@@ -35,8 +35,8 @@ export default function CreateProjectForm() {
       return;
     }
     setNameError(null);
-    toast.success("Project created successfully");
-    router.push("/projects");
+    toast.success("Codebase created. Connect a repository to get started.");
+    router.push(`/projects/${result.projectId}`);
   }
   function handleNameChange() {
     if (nameError) setNameError(null);
@@ -55,10 +55,10 @@ export default function CreateProjectForm() {
           </div>
           <div>
             <h2 className="text-base font-semibold text-foreground">
-              Project details
+              Codebase details
             </h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Give your project a clear name so it is easy to find later.
+              Give this codebase a name you will recognize in your library.
             </p>
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function CreateProjectForm() {
             htmlFor="name"
             className="mb-2 block text-sm font-medium text-foreground"
           >
-            Project name <span className="text-destructive">*</span>
+            Codebase name <span className="text-destructive">*</span>
           </label>
           <input
             id="name"
@@ -99,7 +99,7 @@ export default function CreateProjectForm() {
             </div>
           ) : (
             <p id="project-name-help" className="text-xs text-muted-foreground">
-              Use a name that identifies this codebase.
+              This name will identify the codebase in your library.
             </p>
           )}
         </div>
@@ -122,12 +122,13 @@ export default function CreateProjectForm() {
             className="w-full resize-none rounded-lg border border-input bg-background px-4 py-3 text-sm leading-6 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
           <p className="text-xs text-muted-foreground">
-            Optional. Add a short note about what this project contains.
+            Optional. Add context about this codebase.
           </p>
         </div>
         <div className="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-end">
           <button
             type="button"
+            onClick={() => router.push("/projects")}
             className="rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Cancel

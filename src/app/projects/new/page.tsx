@@ -8,11 +8,12 @@ export default function NewProjectPage() {
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            Create Project
+            Create a codebase
           </h1>
 
           <p className="mt-2 text-sm text-muted">
-            Create a project to start understanding and exploring your codebase.
+            Set up a workspace, then connect the repository you want to
+            understand.
           </p>
         </div>
 

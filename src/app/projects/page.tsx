@@ -17,20 +17,22 @@ export default async function ProjectsPage() {
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              Your Codebases
+              Your codebases
             </h1>
 
             <p className="mt-2 text-sm text-muted-foreground">
-              Explore and understand your connected codebases.
+              A focused home for the codebases you are exploring.
             </p>
           </div>
 
-          <Link
-            href="/projects/new"
-            className="shrink-0 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
-          >
-            Create Workspace
-          </Link>
+          {projects.length > 0 && (
+            <Link
+              href="/projects/new"
+              className="shrink-0 rounded-md bg-foreground px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary"
+            >
+              New codebase
+            </Link>
+          )}
         </div>
 
         {/* Content */}

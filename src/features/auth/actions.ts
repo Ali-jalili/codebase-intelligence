@@ -87,7 +87,7 @@ async function handleSignUp(formData: FormData): Promise<AuthResult> {
     redirectTo: data.session ? "/projects/new" : "/login",
     message: data.session
       ? "Your account is ready."
-      : "Check your email for a confirmation link.",
+      : "Your account is ready. Sign in to continue.",
   };
 }
 
@@ -103,7 +103,10 @@ async function handleLogin(formData: FormData): Promise<AuthResult> {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
   if (error) {
     if (error.code === "invalid_credentials") {
@@ -124,6 +127,25 @@ async function handleLogin(formData: FormData): Promise<AuthResult> {
       success: false,
       error: "We couldn't sign you in. Please try again.",
     };
+  }
+
+  const { data: projects, error: projectsError } = await supabase
+    .from("projects")
+    .select("id")
+    .eq("user_id", data.user.id)
+    .order("created_at", { ascending: false })
+    .limit(2);
+
+  if (projectsError) {
+    return { success: true, redirectTo: "/projects" };
+  }
+
+  if (projects.length === 0) {
+    return { success: true, redirectTo: "/projects/new" };
+  }
+
+  if (projects.length === 1) {
+    return { success: true, redirectTo: `/projects/${projects[0].id}` };
   }
 
   return { success: true, redirectTo: "/projects" };
