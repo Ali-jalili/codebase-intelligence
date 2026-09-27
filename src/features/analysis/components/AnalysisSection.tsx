@@ -42,13 +42,18 @@ export default function AnalysisSection({
   analyses: Analysis[];
 }) {
   const router = useRouter();
+
   const [analysisSubmission, setAnalysisSubmission] =
     useState<AnalysisSubmission | null>(null);
+
   const isEmpty = status === "EMPTY" || repositories.length === 0;
+
   const headerStatus = getHeaderAnalysisStatus(status, repositories, analyses);
+
   const activeAnalysis = analysisSubmission?.analysisId
     ? analyses.find((analysis) => analysis.id === analysisSubmission.analysisId)
     : undefined;
+
   const isSubmissionActive =
     analysisSubmission !== null &&
     activeAnalysis?.status !== "completed" &&
