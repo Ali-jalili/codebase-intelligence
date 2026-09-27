@@ -84,85 +84,78 @@ export default function AnalysisSection({
     }
   }
   return (
-    <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <section aria-labelledby="analysis-section-title">
+      <div className="flex flex-col gap-4 border-b border-[#dce3f1] pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            Step 02
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-primary">
+            02 / Analysis
           </p>
-          <h2 className="mt-2 text-lg font-semibold text-foreground">
-            Analyze your codebase
+          <h2
+            id="analysis-section-title"
+            className="mt-2 text-xl font-semibold tracking-tight text-foreground"
+          >
+            Read the structure
           </h2>
-          <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
-            Choose a connected repository to map its architecture and
-            dependencies.
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+            Run a scan to trace architecture, dependencies, and key paths.
           </p>
         </div>
         <AnalysisStatusBadge status={headerStatus} />
       </div>
-      <div className="mt-6 overflow-hidden rounded-xl border border-border bg-background">
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <div>
-            <p className="text-sm font-semibold text-foreground">
-              Repository analysis
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {isEmpty
-                ? "Connect a repository first to start analysis."
-                : `${repositories.length} ${repositories.length === 1 ? "repository" : "repositories"} available`}
-            </p>
+      <div className="mt-4 flex items-center justify-between border-b border-[#e5eaf3] py-3 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+        <span>Repository scan queue</span>
+        <span>
+          {repositories.length}{" "}
+          {repositories.length === 1 ? "source" : "sources"}
+        </span>
+      </div>
+      {isEmpty ? (
+        <div className="flex items-start gap-4 border-b border-[#dce3f1] py-7">
+          <div className="grid size-10 shrink-0 place-items-center rounded-md bg-[#edf2ff] text-primary">
+            <GitBranch className="size-5" />
           </div>
-          <span className="text-xs font-medium text-muted-foreground">
-            {isEmpty ? "Waiting" : isAnalyzing ? "In progress" : "Ready"}
-          </span>
-        </div>
-        {isEmpty ? (
-          <div className="px-5 py-10 text-center">
-            <div className="mx-auto flex size-11 items-center justify-center rounded-full bg-accent text-accent-foreground">
-              <GitBranch className="size-5" />
-            </div>
-            <h3 className="mt-4 text-sm font-semibold text-foreground">
-              No repository available
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">
+              No source available to scan
             </h3>
-            <p className="mx-auto mt-1 max-w-sm text-sm leading-6 text-muted-foreground">
-              Add a repository above, then return here to start building its
+            <p className="mt-1 max-w-lg text-sm leading-6 text-muted-foreground">
+              Connect a repository in the Source section to start building its
               codebase map.
             </p>
           </div>
-        ) : (
-          <div className="divide-y divide-border">
-            {repositories.map((repository) =>
-              (() => {
-                const analysis = analyses.find(
-                  (item) => item.repository_id === repository.id,
-                );
-                const isSubmitting =
-                  analysisSubmission?.repositoryId === repository.id &&
-                  (analysisSubmission.analysisId === null ||
-                    analysis?.id !== analysisSubmission.analysisId ||
-                    (analysis.status !== "completed" &&
-                      analysis.status !== "failed"));
-                const statusOverride =
-                  isSubmitting &&
-                  analysis?.id !== analysisSubmission?.analysisId
-                    ? "processing"
-                    : undefined;
+        </div>
+      ) : (
+        <div className="divide-y divide-[#e5eaf3] border-b border-[#dce3f1]">
+          {repositories.map((repository) =>
+            (() => {
+              const analysis = analyses.find(
+                (item) => item.repository_id === repository.id,
+              );
+              const isSubmitting =
+                analysisSubmission?.repositoryId === repository.id &&
+                (analysisSubmission.analysisId === null ||
+                  analysis?.id !== analysisSubmission.analysisId ||
+                  (analysis.status !== "completed" &&
+                    analysis.status !== "failed"));
+              const statusOverride =
+                isSubmitting && analysis?.id !== analysisSubmission?.analysisId
+                  ? "processing"
+                  : undefined;
 
-                return (
-                  <RepositoryAnalysisRow
-                    key={repository.id}
-                    repository={repository}
-                    analysis={analysis}
-                    isSubmitting={isSubmitting}
-                    statusOverride={statusOverride}
-                    onAnalyze={handleAnalyze}
-                  />
-                );
-              })(),
-            )}
-          </div>
-        )}
-      </div>
+              return (
+                <RepositoryAnalysisRow
+                  key={repository.id}
+                  repository={repository}
+                  analysis={analysis}
+                  isSubmitting={isSubmitting}
+                  statusOverride={statusOverride}
+                  onAnalyze={handleAnalyze}
+                />
+              );
+            })(),
+          )}
+        </div>
+      )}
     </section>
   );
 }

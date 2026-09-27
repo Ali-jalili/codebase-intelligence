@@ -23,8 +23,11 @@ export async function createProjectAction(
   const projectName = name.trim();
   if (!projectName)
     return { success: false, error: "Project name is required", field: "name" };
+
   const user = await getCurrentUser();
+
   if (!user) return { success: false, error: "Unauthorized" };
+
   try {
     const project = await createProjectInDb({
       userId: user.id,
@@ -32,6 +35,7 @@ export async function createProjectAction(
       description: description.trim() || null,
     });
     return { success: true, projectId: project.id };
+    
   } catch (error) {
     if (
       error &&
@@ -45,6 +49,7 @@ export async function createProjectAction(
         field: "name",
       };
     }
+
     return { success: false, error: "Failed to create project" };
   }
 }

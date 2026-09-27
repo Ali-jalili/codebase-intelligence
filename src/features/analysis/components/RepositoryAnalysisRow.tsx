@@ -28,22 +28,24 @@ export default function RepositoryAnalysisRow({
   const isDisabled = isProcessing || isQueued;
 
   return (
-    <div className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
-        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-          <GitBranch className="size-4" />
-        </div>
+        <span className="grid size-10 shrink-0 place-items-center rounded-md border border-[#dce3f1] bg-white text-primary">
+          <GitBranch className="size-4" aria-hidden="true" />
+        </span>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-foreground">
-            {repository.name}
-          </p>
-          <p className="mt-1 truncate text-xs text-muted-foreground">
-            {repository.provider} · {repository.branch}
-          </p>
-          <p className="mt-1 truncate text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <p className="truncate text-sm font-semibold text-foreground">
+              {repository.name}
+            </p>
+            <span className="inline-flex items-center gap-1 rounded-sm bg-[#f2f4f8] px-1.5 py-1 font-mono text-[9px] text-muted-foreground">
+              <GitBranch size={10} aria-hidden="true" /> {repository.branch}
+            </span>
+          </div>
+          <p className="mt-1 max-w-xl truncate text-xs text-muted-foreground">
             {repository.url}
           </p>
-          <div className="mt-2">
+          <div className="mt-2.5">
             <AnalysisStatusBadge status={analysisStatus} />
           </div>
         </div>
@@ -52,7 +54,7 @@ export default function RepositoryAnalysisRow({
         type="button"
         disabled={isDisabled}
         onClick={() => onAnalyze(repository.id)}
-        className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-md bg-foreground px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
         {isProcessing ? (
           <LoaderCircle className="size-4 animate-spin" />
