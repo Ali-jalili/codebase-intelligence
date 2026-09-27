@@ -3,6 +3,7 @@
 import { updateAnalysisStatus } from "@/features/analysis/services";
 import { getRepositoryById } from "@/features/repositories/services";
 import { cloneRepository } from "@/lib/analyzer/repository/clone";
+import { scanRepository } from "@/lib/analyzer/scanner";
 import { task } from "@trigger.dev/sdk";
 import os from "node:os";
 import path from "node:path";
@@ -23,6 +24,10 @@ export const analyzeRepositoryTask = task({
       );
 
       console.log("Workspace created:", workspace.path);
+
+      const snapshot = await scanRepository(workspace.path);
+
+      console.log("Repository snapshot:", snapshot);
 
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
