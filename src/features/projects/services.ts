@@ -37,6 +37,30 @@ export async function getProjects() {
   return data;
 }
 
+export async function getProjectLibrary() {
+  const projects = await getProjects();
+  if (projects.length === 0) return [];
+
+  const supabase = await createClient();
+  const { data: repositories, error } = await supabase
+    .from("repositories")
+    .select("id, project_id, name, branch, updated_at")
+    .in(
+      "project_id",
+      projects.map((project) => project.id),
+    )
+    .order("updated_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return projects.map((project) => ({
+    ...project,
+    repositories: (repositories ?? []).filter(
+      (repository) => repository.project_id === project.id,
+    ),
+  }));
+}
+
 export async function getProjectById(projectId: string) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");

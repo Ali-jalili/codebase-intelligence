@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowRight, Layers3, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { createProjectAction } from "@/features/projects/actions";
@@ -15,10 +15,11 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex min-w-36 items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
+      className="inline-flex min-w-40 items-center justify-center gap-2 rounded-md bg-foreground px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending && <Loader2 className="size-4 animate-spin" />}
-      {pending ? "Creating..." : "Create project"}
+      {pending ? "Creating..." : "Create workspace"}
+      {!pending && <ArrowRight size={15} aria-hidden="true" />}
     </button>
   );
 }
@@ -44,26 +45,25 @@ export default function CreateProjectForm() {
   return (
     <form
       action={handleSubmit}
-      className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm"
+      className="border-y border-[#dce3f1] bg-white/90 px-5 py-6 sm:px-7 sm:py-8"
     >
-      <div className="border-b border-border bg-surface-elevated px-6 py-5 sm:px-8">
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-            <span aria-hidden="true" className="text-lg">
-              +
-            </span>
-          </div>
-          <div>
-            <h2 className="text-base font-semibold text-foreground">
-              Codebase details
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Give this codebase a name you will recognize in your library.
-            </p>
-          </div>
+      <div className="mb-7 flex items-start gap-3 border-b border-[#e8edf5] pb-5">
+        <span className="grid size-9 shrink-0 place-items-center rounded-md bg-[#edf2ff] text-primary">
+          <Layers3 size={17} aria-hidden="true" />
+        </span>
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-primary">
+            Workspace setup
+          </p>
+          <h2 className="mt-1 text-lg font-semibold tracking-tight text-foreground">
+            First, the essentials
+          </h2>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            You can add the repository in the next step.
+          </p>
         </div>
       </div>
-      <div className="space-y-6 px-6 py-6 sm:px-8 sm:py-8">
+      <div className="space-y-6">
         <div className="space-y-2">
           <label
             htmlFor="name"
@@ -83,7 +83,7 @@ export default function CreateProjectForm() {
             aria-describedby={
               nameError ? "project-name-error" : "project-name-help"
             }
-            className={`w-full rounded-lg border bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 ${nameError ? "border-destructive/60 focus:border-destructive" : "border-input focus:border-primary"}`}
+            className={`w-full rounded-md border bg-white px-4 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 ${nameError ? "border-destructive/60 focus:border-destructive" : "border-input focus:border-primary"}`}
           />
           {nameError ? (
             <div
@@ -118,20 +118,20 @@ export default function CreateProjectForm() {
             name="description"
             rows={4}
             maxLength={500}
-            placeholder="Briefly describe your project..."
-            className="w-full resize-none rounded-lg border border-input bg-background px-4 py-3 text-sm leading-6 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+            placeholder="What does this codebase do? (optional)"
+            className="w-full resize-none rounded-md border border-input bg-white px-4 py-3 text-sm leading-6 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
           <p className="text-xs text-muted-foreground">
             Optional. Add context about this codebase.
           </p>
         </div>
-        <div className="flex flex-col-reverse gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-end">
+        <div className="flex flex-col-reverse gap-3 border-t border-[#e8edf5] pt-5 sm:flex-row sm:items-center sm:justify-between">
           <button
             type="button"
             onClick={() => router.push("/projects")}
-            className="rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="rounded-md px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
-            Cancel
+            Back to library
           </button>
           <SubmitButton />
         </div>
