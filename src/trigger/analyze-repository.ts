@@ -1,6 +1,9 @@
 /** @format */
 
-import { updateAnalysisStatus } from "@/features/analysis/services";
+import {
+  saveAnalysisSnapshot,
+  updateAnalysisStatus,
+} from "@/features/analysis/services";
 import { getRepositoryById } from "@/features/repositories/services";
 import { cloneRepository } from "@/lib/analyzer/repository/clone";
 import { scanRepository } from "@/lib/analyzer/scanner";
@@ -28,6 +31,8 @@ export const analyzeRepositoryTask = task({
       const snapshot = await scanRepository(workspace.path);
 
       console.log("Repository snapshot:", snapshot);
+
+      await saveAnalysisSnapshot(payload.analysisId, snapshot);
 
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
