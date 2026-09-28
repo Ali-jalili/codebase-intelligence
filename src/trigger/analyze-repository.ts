@@ -6,7 +6,7 @@ import {
   updateAnalysisStatus,
 } from "@/features/analysis/services";
 import { getRepositoryById } from "@/features/repositories/services";
-import { extractMetadata } from "@/lib/analyzer/extractMetadata";
+import { extractMetadata } from "@/lib/analyzer/metadata/extractMetadata";
 import { cloneRepository } from "@/lib/analyzer/repository/clone";
 import { scanRepository } from "@/lib/analyzer/scanner";
 import { task } from "@trigger.dev/sdk";

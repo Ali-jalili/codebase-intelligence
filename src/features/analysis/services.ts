@@ -9,7 +9,7 @@ import type {
 } from "@/features/projects/types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { RepositorySnapshot } from "@/lib/analyzer/types";
-import { RepositoryMetadata } from "@/lib/analyzer/extractMetadata";
+import { RepositoryMetadata } from "@/lib/analyzer/metadata/extractMetadata";
 
 export function getWorkspaceStatus(
   repositories: Awaited<ReturnType<typeof getRepositoriesForProject>>,
