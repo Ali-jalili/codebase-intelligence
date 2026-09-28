@@ -1,18 +1,22 @@
 /** @format */
 
 import fs from "node:fs/promises";
-import path from "node:path";
 
-export type RepositoryMetadata = {
-  dependencies: Record<string, string>;
-  devDependencies: Record<string, string>;
-  scripts: Record<string, string>;
-};
+import { findPackageJson } from "./findPackageJson";
+import { RepositoryMetadata } from "../types";
 
 export async function extractMetadata(
   workspacePath: string,
 ): Promise<RepositoryMetadata> {
-  const packageJsonPath = path.join(workspacePath, "package.json");
+  const packageJsonPath = await findPackageJson(workspacePath);
+
+  if (!packageJsonPath) {
+    return {
+      dependencies: {},
+      devDependencies: {},
+      scripts: {},
+    };
+  }
 
   try {
     const packageJsonFile = await fs.readFile(packageJsonPath, "utf-8");

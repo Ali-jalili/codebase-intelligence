@@ -14,6 +14,7 @@ export type RepositoryMetadata = {
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
   scripts: Record<string, string>;
+  stack?: ProjectStack;
 };
 
 export type ProjectStack = {

@@ -8,8 +8,7 @@ import type {
   WorkspaceStatus,
 } from "@/features/projects/types";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { RepositorySnapshot } from "@/lib/analyzer/types";
-import { RepositoryMetadata } from "@/lib/analyzer/metadata/extractMetadata";
+import { RepositoryMetadata, RepositorySnapshot } from "@/lib/analyzer/types";
 
 export function getWorkspaceStatus(
   repositories: Awaited<ReturnType<typeof getRepositoriesForProject>>,

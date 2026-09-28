@@ -5,11 +5,19 @@ import {
   saveAnalysisSnapshot,
   updateAnalysisStatus,
 } from "@/features/analysis/services";
+
 import { getRepositoryById } from "@/features/repositories/services";
+
+import { detectStack } from "@/lib/analyzer/metadata/detectStack";
 import { extractMetadata } from "@/lib/analyzer/metadata/extractMetadata";
+
 import { cloneRepository } from "@/lib/analyzer/repository/clone";
+import { findRepositoryRoot } from "@/lib/analyzer/repository/findRepositoryRoot";
+
 import { scanRepository } from "@/lib/analyzer/scanner";
+
 import { task } from "@trigger.dev/sdk";
+
 import os from "node:os";
 import path from "node:path";
 
@@ -21,8 +29,10 @@ export const analyzeRepositoryTask = task({
       await updateAnalysisStatus(payload.analysisId, "processing");
 
       const repository = await getRepositoryById(payload.repositoryId);
+
       console.log("Repository:", repository.url);
 
+      // 1. Clone
       const workspace = await cloneRepository(
         repository.url,
         path.join(os.tmpdir(), "analyzer", payload.analysisId),
@@ -30,17 +40,33 @@ export const analyzeRepositoryTask = task({
 
       console.log("Workspace created:", workspace.path);
 
-      const snapshot = await scanRepository(workspace.path);
+      // 2. Find real project root
+      const repositoryRoot = await findRepositoryRoot(workspace.path);
 
-      console.log("Repository snapshot:", snapshot);
+      console.log("Repository root:", repositoryRoot);
+
+      // 3. Scan files/folders
+      const snapshot = await scanRepository(repositoryRoot);
 
       await saveAnalysisSnapshot(payload.analysisId, snapshot);
 
-      const metadata = await extractMetadata(workspace.path);
+      console.log("Snapshot saved");
 
-      await saveAnalysisMetadata(payload.analysisId, metadata);
+      // 4. Extract package metadata
+      const metadata = await extractMetadata(repositoryRoot);
 
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      console.log("Metadata:", metadata);
+
+      // 5. Detect stack
+      const stack = detectStack(metadata);
+
+      console.log("Detected stack:", stack);
+
+      // 6. Save metadata
+      await saveAnalysisMetadata(payload.analysisId, {
+        ...metadata,
+        stack,
+      });
 
       await updateAnalysisStatus(payload.analysisId, "completed");
 
