@@ -1,10 +1,12 @@
 /** @format */
 
 import {
+  saveAnalysisMetadata,
   saveAnalysisSnapshot,
   updateAnalysisStatus,
 } from "@/features/analysis/services";
 import { getRepositoryById } from "@/features/repositories/services";
+import { extractMetadata } from "@/lib/analyzer/extractMetadata";
 import { cloneRepository } from "@/lib/analyzer/repository/clone";
 import { scanRepository } from "@/lib/analyzer/scanner";
 import { task } from "@trigger.dev/sdk";
@@ -33,6 +35,10 @@ export const analyzeRepositoryTask = task({
       console.log("Repository snapshot:", snapshot);
 
       await saveAnalysisSnapshot(payload.analysisId, snapshot);
+
+      const metadata = await extractMetadata(workspace.path);
+
+      await saveAnalysisMetadata(payload.analysisId, metadata);
 
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
