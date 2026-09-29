@@ -1,30 +1,21 @@
 /** @format */
 
 import path from "node:path";
-import { extractImports } from "./extractImports";
-import { resolveImport } from "./resolveImport";
+
+import { analyzeRepositoryImports } from "./analyzeRepositoryImports";
 
 async function main() {
-  const sourceFilePath = path.resolve("src/test-workspace/src/App.tsx");
+  const rootPath = path.resolve("src/test-workspace");
 
-  const sourceCode = `
-    import Header from "./components/Header";
-    import Button from "./components/Button";
-    import { useState } from "react";
-  `;
+  const files = [
+    "src/App.tsx",
+    "src/components/Header.tsx",
+    "src/components/Button.tsx",
+  ];
 
-  const imports = extractImports(sourceCode, sourceFilePath);
+  const relationships = await analyzeRepositoryImports(files, rootPath);
 
-  console.log("Imports:", imports);
-
-  for (const importStatement of imports) {
-    const resolvedPath = await resolveImport(
-      importStatement.source,
-      sourceFilePath,
-    );
-
-    console.log(importStatement.source, "→", resolvedPath);
-  }
+  console.log("Relationships:", relationships);
 }
 
 main();
