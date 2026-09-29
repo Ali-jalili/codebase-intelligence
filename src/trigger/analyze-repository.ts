@@ -16,6 +16,8 @@ import { findRepositoryRoot } from "@/lib/analyzer/repository/findRepositoryRoot
 
 import { scanRepository } from "@/lib/analyzer/scanner";
 import { cleanupRepository } from "@/lib/analyzer/repository/cleanup";
+import { analyzeRepositoryImports } from "@/lib/analyzer/static-analysis/analyzeRepositoryImports";
+
 import { task } from "@trigger.dev/sdk";
 
 import os from "node:os";
@@ -52,8 +54,14 @@ export const analyzeRepositoryTask = task({
       const snapshot = await scanRepository(repositoryRoot);
 
       await saveAnalysisSnapshot(payload.analysisId, snapshot);
-
       console.log("Snapshot saved");
+
+      const relationships = await analyzeRepositoryImports(
+        snapshot.files,
+        repositoryRoot,
+      );
+
+      console.log("Import relationships:", relationships);
 
       // 4. Extract package metadata
       const metadata = await extractMetadata(repositoryRoot);
