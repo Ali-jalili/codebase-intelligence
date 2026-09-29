@@ -22,13 +22,11 @@ type RelationshipGraphProps = {
 };
 
 export default function RelationshipGraph({ graph }: RelationshipGraphProps) {
-  const nodes: Node[] = graph.nodes.map((node) => ({
+  const nodes: Node[] = graph.nodes.map((node, index) => ({
     id: node.id,
     position: {
-      // eslint-disable-next-line react-hooks/purity
-      x: Math.random() * 800,
-      // eslint-disable-next-line react-hooks/purity
-      y: Math.random() * 500,
+      x: (index % 5) * 180,
+      y: Math.floor(index / 5) * 100,
     },
     data: {
       label: node.path,

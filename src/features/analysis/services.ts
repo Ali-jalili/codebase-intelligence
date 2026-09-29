@@ -16,6 +16,17 @@ import type {
 
 import type { Analysis } from "./types";
 
+export type AnalysisSnapshot = RepositorySnapshot & {
+  knowledgeGraph: KnowledgeGraph;
+};
+
+export type AnalysisSnapshotRecord = {
+  id: string;
+  analysis_id: string;
+  snapshot: AnalysisSnapshot;
+  created_at: string;
+};
+
 export function getWorkspaceStatus(
   repositories: Awaited<ReturnType<typeof getRepositoriesForProject>>,
 ): WorkspaceStatus {
@@ -91,10 +102,6 @@ export async function updateAnalysisStatus(
   return data;
 }
 
-export type AnalysisSnapshot = RepositorySnapshot & {
-  knowledgeGraph: KnowledgeGraph;
-};
-
 export async function saveAnalysisSnapshot(
   analysisId: string,
   snapshot: AnalysisSnapshot,
@@ -135,7 +142,9 @@ export async function saveAnalysisMetadata(
   return data;
 }
 
-export async function getAnalysisSnapshot(analysisId: string) {
+export async function getAnalysisSnapshot(
+  analysisId: string,
+): Promise<AnalysisSnapshotRecord> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -148,5 +157,5 @@ export async function getAnalysisSnapshot(analysisId: string) {
 
   if (error) throw error;
 
-  return data;
+  return data as AnalysisSnapshotRecord;
 }

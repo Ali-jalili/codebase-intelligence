@@ -5,12 +5,14 @@ import AnalysisSection from "@/features/analysis/components/AnalysisSection";
 import IntelligenceSection from "@/features/analysis/components/IntelligenceSection";
 import RepositorySection from "@/features/repositories/components/RepositorySection";
 import ProjectHeader from "./ProjectHeader";
-import { AnalysisSnapshot } from "@/features/analysis/services";
+import type { AnalysisSnapshot } from "@/features/analysis/services";
+import type { AnalysisSnapshotRecord } from "@/features/analysis/services";
+import RelationshipGraph from "@/features/analysis/components/RelationshipGraph";
 
 interface ProjectWorkspaceProps {
   project: { id: string; name: string; description: string | null };
   workspace: WorkspaceState;
-  snapshot: AnalysisSnapshot | null;
+  snapshot: AnalysisSnapshotRecord | null;
 }
 
 export default function ProjectWorkspace({
@@ -18,6 +20,7 @@ export default function ProjectWorkspace({
   workspace,
   snapshot,
 }: ProjectWorkspaceProps) {
+  console.log("SNAPSHOT:", snapshot);
   const hasRepositories = workspace.repositories.length > 0;
   const isAnalyzed = workspace.analyses.some(
     (analysis) => analysis.status === "completed",
@@ -158,6 +161,10 @@ export default function ProjectWorkspace({
                 isReady={isAnalyzed}
                 isAnalyzing={isAnalyzing}
               />
+
+              {snapshot?.snapshot.knowledgeGraph ? (
+                <RelationshipGraph graph={snapshot.snapshot.knowledgeGraph} />
+              ) : null}
             </div>
           </div>
         ) : (

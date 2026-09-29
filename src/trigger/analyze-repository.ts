@@ -29,8 +29,6 @@ export const analyzeRepositoryTask = task({
 
       const repository = await getRepositoryById(payload.repositoryId);
 
-      console.log("Repository:", repository.url);
-
       // 1. Clone repository
       const workspace = await cloneRepository(
         repository.url,
@@ -39,17 +37,11 @@ export const analyzeRepositoryTask = task({
 
       workspacePath = workspace.path;
 
-      console.log("Workspace created:", workspace.path);
-
       // 2. Find project root
       const repositoryRoot = await findRepositoryRoot(workspace.path);
 
-      console.log("Repository root:", repositoryRoot);
-
       // 3. Scan repository
       const snapshot = await scanRepository(repositoryRoot);
-
-      console.log("Repository snapshot:", snapshot);
 
       // 4. Analyze imports
       const relationships = await analyzeRepositoryImports(
@@ -57,12 +49,13 @@ export const analyzeRepositoryTask = task({
         repositoryRoot,
       );
 
-      console.log("Import relationships:", relationships);
-
       // 5. Build knowledge graph
       const knowledgeGraph = buildKnowledgeGraph(snapshot.files, relationships);
 
-      console.log("Knowledge graph:", knowledgeGraph);
+      console.log("SNAPSHOT BEFORE SAVE:", {
+        ...snapshot,
+        knowledgeGraph,
+      });
 
       // 6. Save analysis snapshot
       await saveAnalysisSnapshot(payload.analysisId, {
@@ -75,12 +68,8 @@ export const analyzeRepositoryTask = task({
       // 7. Extract package metadata
       const metadata = await extractMetadata(repositoryRoot);
 
-      console.log("Metadata:", metadata);
-
       // 8. Detect technology stack
       const stack = detectStack(metadata);
-
-      console.log("Detected stack:", stack);
 
       // 9. Save metadata
       await saveAnalysisMetadata(payload.analysisId, {
