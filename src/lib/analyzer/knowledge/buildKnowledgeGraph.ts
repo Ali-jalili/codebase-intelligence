@@ -1,6 +1,7 @@
 /** @format */
 
 import type { ImportRelationship } from "../static-analysis/types";
+
 import type { KnowledgeGraph, KnowledgeNode } from "./types";
 
 export function buildKnowledgeGraph(
@@ -9,11 +10,17 @@ export function buildKnowledgeGraph(
 ): KnowledgeGraph {
   const nodes = new Map<string, KnowledgeNode>();
 
-  for (const file of files) {
-    nodes.set(file, {
-      id: file,
+  for (const relationship of relationships) {
+    nodes.set(relationship.source, {
+      id: relationship.source,
       type: "file",
-      path: file,
+      path: relationship.source,
+    });
+
+    nodes.set(relationship.target, {
+      id: relationship.target,
+      type: "file",
+      path: relationship.target,
     });
   }
 
