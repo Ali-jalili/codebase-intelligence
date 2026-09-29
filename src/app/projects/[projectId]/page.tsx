@@ -1,7 +1,12 @@
 /** @format */
 
-import { getWorkspaceState } from "@/features/analysis/services";
+import {
+  getAnalysisSnapshot,
+  getWorkspaceState,
+} from "@/features/analysis/services";
+
 import ProjectWorkspace from "@/features/projects/components/ProjectWorkspace";
+
 import { getProjectById } from "@/features/projects/services";
 
 export default async function ProjectPage({
@@ -12,7 +17,21 @@ export default async function ProjectPage({
   const { projectId } = await params;
 
   const project = await getProjectById(projectId);
+
   const workspace = await getWorkspaceState(projectId);
 
-  return <ProjectWorkspace project={project} workspace={workspace} />;
+  const analysis = workspace.analyses[0];
+
+  const snapshot =
+    analysis?.status === "completed"
+      ? await getAnalysisSnapshot(analysis.id)
+      : null;
+
+  return (
+    <ProjectWorkspace
+      project={project}
+      workspace={workspace}
+      snapshot={snapshot}
+    />
+  );
 }

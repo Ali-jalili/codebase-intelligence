@@ -5,15 +5,18 @@ import AnalysisSection from "@/features/analysis/components/AnalysisSection";
 import IntelligenceSection from "@/features/analysis/components/IntelligenceSection";
 import RepositorySection from "@/features/repositories/components/RepositorySection";
 import ProjectHeader from "./ProjectHeader";
+import { AnalysisSnapshot } from "@/features/analysis/services";
 
 interface ProjectWorkspaceProps {
   project: { id: string; name: string; description: string | null };
   workspace: WorkspaceState;
+  snapshot: AnalysisSnapshot | null;
 }
 
 export default function ProjectWorkspace({
   project,
   workspace,
+  snapshot,
 }: ProjectWorkspaceProps) {
   const hasRepositories = workspace.repositories.length > 0;
   const isAnalyzed = workspace.analyses.some(

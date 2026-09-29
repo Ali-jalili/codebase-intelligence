@@ -134,3 +134,19 @@ export async function saveAnalysisMetadata(
 
   return data;
 }
+
+export async function getAnalysisSnapshot(analysisId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("analysis_snapshots")
+    .select("*")
+    .eq("analysis_id", analysisId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
