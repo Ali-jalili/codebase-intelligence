@@ -17,6 +17,7 @@ import { findRepositoryRoot } from "@/lib/analyzer/repository/findRepositoryRoot
 import { scanRepository } from "@/lib/analyzer/scanner";
 import { cleanupRepository } from "@/lib/analyzer/repository/cleanup";
 import { analyzeRepositoryImports } from "@/lib/analyzer/static-analysis/analyzeRepositoryImports";
+import { buildKnowledgeGraph } from "@/lib/analyzer/knowledge/buildKnowledgeGraph";
 
 import { task } from "@trigger.dev/sdk";
 
@@ -62,6 +63,10 @@ export const analyzeRepositoryTask = task({
       );
 
       console.log("Import relationships:", relationships);
+
+      const knowledgeGraph = buildKnowledgeGraph(snapshot.files, relationships);
+
+      console.log("Knowledge graph:", knowledgeGraph);
 
       // 4. Extract package metadata
       const metadata = await extractMetadata(repositoryRoot);
