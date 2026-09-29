@@ -22,3 +22,5 @@ export type ProjectStack = {
   language: string | null;
   bundler: string | null;
 };
+
+export type AnalysisStatus = "pending" | "processing" | "completed" | "failed";

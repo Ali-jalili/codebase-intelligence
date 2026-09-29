@@ -1,26 +1,21 @@
 /** @format */
+/** @format */
 
 import {
   saveAnalysisMetadata,
   saveAnalysisSnapshot,
   updateAnalysisStatus,
 } from "@/features/analysis/services";
-
 import { getRepositoryById } from "@/features/repositories/services";
-
 import { detectStack } from "@/lib/analyzer/metadata/detectStack";
 import { extractMetadata } from "@/lib/analyzer/metadata/extractMetadata";
-
+import { cleanupRepository } from "@/lib/analyzer/repository/cleanup";
 import { cloneRepository } from "@/lib/analyzer/repository/clone";
 import { findRepositoryRoot } from "@/lib/analyzer/repository/findRepositoryRoot";
-
-import { scanRepository } from "@/lib/analyzer/scanner";
-import { cleanupRepository } from "@/lib/analyzer/repository/cleanup";
-import { analyzeRepositoryImports } from "@/lib/analyzer/static-analysis/analyzeRepositoryImports";
 import { buildKnowledgeGraph } from "@/lib/analyzer/knowledge/buildKnowledgeGraph";
-
+import { analyzeRepositoryImports } from "@/lib/analyzer/static-analysis/analyzeRepositoryImports";
+import { scanRepository } from "@/lib/analyzer/scanner";
 import { task } from "@trigger.dev/sdk";
-
 import os from "node:os";
 import path from "node:path";
 
@@ -37,26 +32,27 @@ export const analyzeRepositoryTask = task({
 
       console.log("Repository:", repository.url);
 
-      // 1. Clone
+      // 1. Clone repository
       const workspace = await cloneRepository(
         repository.url,
         path.join(os.tmpdir(), "analyzer", payload.analysisId),
       );
+
       workspacePath = workspace.path;
 
       console.log("Workspace created:", workspace.path);
 
-      // 2. Find real project root
+      // 2. Find project root
       const repositoryRoot = await findRepositoryRoot(workspace.path);
 
       console.log("Repository root:", repositoryRoot);
 
-      // 3. Scan files/folders
+      // 3. Scan repository
       const snapshot = await scanRepository(repositoryRoot);
 
-      await saveAnalysisSnapshot(payload.analysisId, snapshot);
-      console.log("Snapshot saved");
+      console.log("Repository snapshot:", snapshot);
 
+      // 4. Analyze imports
       const relationships = await analyzeRepositoryImports(
         snapshot.files,
         repositoryRoot,
@@ -64,26 +60,36 @@ export const analyzeRepositoryTask = task({
 
       console.log("Import relationships:", relationships);
 
+      // 5. Build knowledge graph
       const knowledgeGraph = buildKnowledgeGraph(snapshot.files, relationships);
 
       console.log("Knowledge graph:", knowledgeGraph);
 
-      // 4. Extract package metadata
+      // 6. Save analysis snapshot
+      await saveAnalysisSnapshot(payload.analysisId, {
+        ...snapshot,
+        knowledgeGraph,
+      });
+
+      console.log("Snapshot saved");
+
+      // 7. Extract package metadata
       const metadata = await extractMetadata(repositoryRoot);
 
       console.log("Metadata:", metadata);
 
-      // 5. Detect stack
+      // 8. Detect technology stack
       const stack = detectStack(metadata);
 
       console.log("Detected stack:", stack);
 
-      // 6. Save metadata
+      // 9. Save metadata
       await saveAnalysisMetadata(payload.analysisId, {
         ...metadata,
         stack,
       });
 
+      // 10. Complete analysis
       await updateAnalysisStatus(payload.analysisId, "completed");
 
       return {
